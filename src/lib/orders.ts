@@ -39,16 +39,54 @@ function getServerOrderSnapshot(): string | null {
   return null;
 }
 
+function isOrderLine(value: unknown): value is OrderLine {
+  if (typeof value !== "object" || value === null) return false;
+  const line = value as Record<string, unknown>;
+  return (
+    typeof line.label === "string" &&
+    typeof line.qty === "number" &&
+    Number.isFinite(line.qty) &&
+    line.qty >= 1 &&
+    typeof line.unitPrice === "number" &&
+    Number.isFinite(line.unitPrice) &&
+    line.unitPrice >= 0
+  );
+}
+
+export function isPlacedOrder(value: unknown): value is PlacedOrder {
+  if (typeof value !== "object" || value === null) return false;
+  const order = value as Record<string, unknown>;
+  return (
+    typeof order.id === "string" &&
+    order.id.length > 0 &&
+    typeof order.email === "string" &&
+    order.email.length > 0 &&
+    typeof order.name === "string" &&
+    order.name.length > 0 &&
+    Array.isArray(order.items) &&
+    order.items.every(isOrderLine) &&
+    typeof order.total === "number" &&
+    Number.isFinite(order.total) &&
+    order.total >= 0 &&
+    typeof order.placedAt === "string"
+  );
+}
+
+export function parseOrder(raw: string | null): PlacedOrder | null {
+  if (!raw) return null;
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    return isPlacedOrder(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
 export function usePlacedOrder(): PlacedOrder | null {
   const raw = useSyncExternalStore(
     subscribe,
     getOrderSnapshot,
     getServerOrderSnapshot,
   );
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw) as PlacedOrder;
-  } catch {
-    return null;
-  }
+  return parseOrder(raw);
 }

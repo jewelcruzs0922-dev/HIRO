@@ -68,7 +68,7 @@ NEXT_PUBLIC_SITE_URL=https://your-deployment-url.vercel.app
   - Simulated payment — no card data, no network writes
 - **Mission** split section
 - **Footer** with mountain silhouette, nav, contact email
-- **Tests:** 25 unit (Vitest) + 14 e2e (Playwright, desktop + mobile) with axe WCAG A/AA in CI — including the populated checkout and confirmation
+- **Tests:** 35 unit (Vitest) + 14 e2e (Playwright, desktop + mobile) with axe WCAG A/AA in CI — including the populated checkout and confirmation
 - **A11y:** skip link, landmarks, `aria-*` on controls, focus-visible styles, reduced-motion support
 - **SEO:** metadata, canonical URL, Open Graph / Twitter cards, JSON-LD, `robots.txt`, `sitemap.xml`
 - **Responsive:** mobile / tablet / desktop breakpoints
@@ -137,6 +137,7 @@ src/
     constants.ts
     cart.test.ts             # vitest — cart math, clamping, storage parsing
     checkout.test.ts         # vitest — validation, line images, delivery dates
+    orders.test.ts           # vitest — stored-order type guard
 e2e/
   checkout.spec.ts           # full purchase flow + edge cases
   a11y.spec.ts               # axe WCAG A/AA on key routes
@@ -229,7 +230,7 @@ Largest first-load chunk ≈ **224KB raw** (shared framework/vendor).
 
 ```bash
 npm run test
-# 25 passed — cart math/parsing, checkout validation, line images, delivery dates
+# 35 passed — cart math/parsing, checkout validation, order storage guard, delivery dates
 
 npm run test:e2e
 # 14 passed — full order flow on desktop + mobile, guards, 4× axe per viewport
