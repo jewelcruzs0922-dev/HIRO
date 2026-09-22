@@ -9,13 +9,9 @@ A production-style landing + **simulated checkout** for a fictional premium e-bi
 
 ## Live demo
 
-**Not deployed yet.** Deploy in one command from the repo root:
+**https://hiro-azurite2.vercel.app**
 
-```bash
-npx vercel
-```
-
-Then set `NEXT_PUBLIC_SITE_URL` to your deployment URL (see `.env.example`) and replace this line with the live link.
+Production is deployed from this repo with the Vercel CLI (`npx vercel --prod`). The canonical URL lives in `src/lib/site.ts` (safe fallback if the env var is missing); set `NEXT_PUBLIC_SITE_URL` per `.env.example` when using a custom domain.
 
 ---
 
