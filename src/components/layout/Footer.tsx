@@ -1,14 +1,21 @@
-"use client";
-
-import { m, useInView } from "framer-motion";
-import { useRef } from "react";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { navLinks } from "@/lib/nav";
+import Reveal from "@/components/ui/Reveal";
 
 function InstagramIcon({ size = 18 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
       <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
       <circle cx="12" cy="12" r="5" />
       <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" />
@@ -18,7 +25,17 @@ function InstagramIcon({ size = 18 }: { size?: number }) {
 
 function FacebookIcon({ size = 18 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
       <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
     </svg>
   );
@@ -26,16 +43,40 @@ function FacebookIcon({ size = 18 }: { size?: number }) {
 
 function YoutubeIcon({ size = 18 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
       <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.13C5.12 19.56 12 19.56 12 19.56s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.43z" />
-      <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="currentColor" stroke="none" />
+      <polygon
+        points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"
+        fill="currentColor"
+        stroke="none"
+      />
     </svg>
   );
 }
 
 function TikTokIcon({ size = 18 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
       <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
     </svg>
   );
@@ -78,57 +119,51 @@ function MountainSilhouette() {
 }
 
 export default function Footer() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-40px" });
-
   return (
-    <footer id="support" ref={ref} className="relative overflow-hidden bg-[#1A1A1A]">
+    <footer id="support" className="relative overflow-hidden bg-[#1A1A1A]">
       <MountainSilhouette />
 
       <div className="relative z-10 mx-auto max-w-[1280px] px-5 sm:px-6 md:px-10">
-        <m.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="grid grid-cols-1 items-center gap-8 pb-10 pt-12 sm:gap-10 sm:pb-12 sm:pt-14 md:grid-cols-3 md:gap-6 md:pb-14 md:pt-16"
-        >
-          <div className="md:col-span-1">
-            <span className="text-[28px] font-extrabold leading-none tracking-[0.2em] text-white sm:text-[32px] md:text-[34px]">
-              HIRO
-            </span>
+        <Reveal y={16} duration={0.6} margin="-40px">
+          <div className="grid grid-cols-1 items-center gap-8 pt-12 pb-10 sm:gap-10 sm:pt-14 sm:pb-12 md:grid-cols-3 md:gap-6 md:pt-16 md:pb-14">
+            <div className="md:col-span-1">
+              <span className="text-[28px] leading-none font-extrabold tracking-[0.2em] text-white sm:text-[32px] md:text-[34px]">
+                HIRO
+              </span>
+            </div>
+
+            <div className="flex flex-col items-center gap-2.5 text-center md:col-span-1">
+              <h2 className="text-[18px] leading-tight font-bold tracking-[-0.01em] text-white">
+                Ready to Ride?
+              </h2>
+              <p className="text-[13.5px] leading-snug text-white/70">
+                Join the movement. Choose HIRO.
+              </p>
+              <a
+                href="mailto:support@hiro.bike"
+                className="inline-flex min-h-[44px] items-center text-[13.5px] text-white/70 underline-offset-4 transition-colors hover:text-white hover:underline"
+              >
+                support@hiro.bike
+              </a>
+              <Link
+                href="/#bikes"
+                className="group mt-1.5 inline-flex min-h-[44px] items-center gap-2 rounded-[8px] bg-[#4A7858] px-5 py-2.5 text-[13.5px] font-medium text-white transition-colors hover:bg-[#3F684C]"
+              >
+                Shop Now
+                <ArrowRight
+                  size={15}
+                  strokeWidth={1.8}
+                  aria-hidden
+                  className="transition-transform duration-200 group-hover:translate-x-1"
+                />
+              </Link>
+            </div>
+
+            <div className="hidden md:col-span-1 md:block" aria-hidden />
           </div>
+        </Reveal>
 
-          <div className="flex flex-col items-center gap-2.5 text-center md:col-span-1">
-            <h2 className="text-[18px] font-bold leading-tight tracking-[-0.01em] text-white">
-              Ready to Ride?
-            </h2>
-            <p className="text-[13.5px] leading-snug text-white/70">
-              Join the movement. Choose HIRO.
-            </p>
-            <a
-              href="mailto:support@hiro.bike"
-              className="inline-flex min-h-[44px] items-center text-[13.5px] text-white/70 underline-offset-4 transition-colors hover:text-white hover:underline"
-            >
-              support@hiro.bike
-            </a>
-            <a
-              href="#bikes"
-              className="group mt-1.5 inline-flex min-h-[44px] items-center gap-2 rounded-[8px] bg-[#4A7858] px-5 py-2.5 text-[13.5px] font-medium text-white transition-colors hover:bg-[#3F684C]"
-            >
-              Shop Now
-              <ArrowRight
-                size={15}
-                strokeWidth={1.8}
-                aria-hidden
-                className="transition-transform duration-200 group-hover:translate-x-1"
-              />
-            </a>
-          </div>
-
-          <div className="hidden md:col-span-1 md:block" aria-hidden />
-        </m.div>
-
-        <div className="border-t border-white/8 pb-8 pt-5 md:pb-7 md:pt-4">
+        <div className="border-t border-white/8 pt-5 pb-8 md:pt-4 md:pb-7">
           <div className="flex flex-col items-center gap-5 md:flex-row md:justify-between md:gap-6">
             <p className="order-3 text-[12px] text-white/70 md:order-1 md:text-[12.5px]">
               <span suppressHydrationWarning>

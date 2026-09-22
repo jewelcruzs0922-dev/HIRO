@@ -1,17 +1,17 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-paper: #F7F5F1;
-  --color-charcoal: #1C1C1A;
-  --color-forest: #2F5D3A;
-  --color-cream: #FAF8F5;
+  --color-paper: #f7f5f1;
+  --color-charcoal: #1c1c1a;
+  --color-forest: #2f5d3a;
+  --color-cream: #faf8f5;
 
   --font-sans: var(--font-geist-sans);
 }
 
 ::selection {
-  background-color: #1A1A1A;
-  color: #F5F0EB;
+  background-color: #1a1a1a;
+  color: #f5f0eb;
 }
 
 html {
@@ -20,18 +20,18 @@ html {
 }
 
 :focus-visible {
-  outline: 2px solid #2F5D3A;
+  outline: 2px solid #2f5d3a;
   outline-offset: 3px;
 }
 
 /* Light focus ring on dark surfaces where #2F5D3A fails 3:1 */
 :where(header, footer, [role="dialog"], #home, #about) :focus-visible {
-  outline-color: #F5F0EB;
+  outline-color: #f5f0eb;
 }
 
 body {
-  background-color: #F5F0EB;
-  color: #1A1A1A;
+  background-color: #f5f0eb;
+  color: #1a1a1a;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
@@ -58,16 +58,16 @@ body::before {
 }
 
 ::-webkit-scrollbar-track {
-  background: #F5F0EB;
+  background: #f5f0eb;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #B8B5B0;
+  background: #b8b5b0;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #7D8B7A;
+  background: #7d8b7a;
 }
 
 /* Bike image box: cap width on small screens to prevent horizontal overflow */

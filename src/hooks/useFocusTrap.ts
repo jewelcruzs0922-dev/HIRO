@@ -10,7 +10,7 @@ interface FocusTrapOptions {
 
 export function useFocusTrap(
   containerRef: RefObject<HTMLElement | null>,
-  { active, onEscape, initialFocusRef }: FocusTrapOptions
+  { active, onEscape, initialFocusRef }: FocusTrapOptions,
 ) {
   useEffect(() => {
     if (!active) return;
@@ -23,7 +23,7 @@ export function useFocusTrap(
       if (e.key !== "Tab" || !containerRef.current) return;
 
       const focusable = containerRef.current.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled])'
+        "a[href], button:not([disabled])",
       );
       if (focusable.length === 0) return;
 

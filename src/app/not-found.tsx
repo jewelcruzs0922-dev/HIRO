@@ -7,7 +7,7 @@ export default function NotFound() {
       tabIndex={-1}
       className="flex min-h-screen flex-col items-center justify-center bg-[#F0EDE8] px-5 text-center"
     >
-      <span className="mb-4 text-[13px] font-bold uppercase tracking-[0.2em] text-[#2F5D3A]">
+      <span className="mb-4 text-[13px] font-bold tracking-[0.2em] text-[#2F5D3A] uppercase">
         404
       </span>
       <h1 className="mb-3 text-[clamp(1.75rem,5vw,2.75rem)] font-extrabold tracking-[-0.03em] text-[#1C1C1A]">

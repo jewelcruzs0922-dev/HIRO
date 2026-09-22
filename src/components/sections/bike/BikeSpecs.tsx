@@ -1,10 +1,5 @@
 import { Target, Gauge, Battery, Weight } from "lucide-react";
-
-export interface SpecItem {
-  top?: string;
-  value: string;
-  bottom: string;
-}
+import type { SpecItem } from "@/lib/bikes";
 
 const icons = [Target, Gauge, Battery, Weight];
 
@@ -13,7 +8,7 @@ export default function BikeSpecs({ specs }: { specs: SpecItem[] }) {
     <div
       role="group"
       aria-label="Specifications"
-      className="grid grid-cols-2 gap-x-6 gap-y-7 border-t border-[#1C1C1A]/12 pt-7 sm:max-w-md md:max-w-none lg:flex lg:max-w-none lg:flex-col lg:gap-9 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0"
+      className="grid grid-cols-2 gap-x-6 gap-y-7 border-t border-[#1C1C1A]/12 pt-7 sm:max-w-md md:max-w-none lg:flex lg:max-w-none lg:flex-col lg:gap-9 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-10"
     >
       {specs.map((s, i) => {
         const Icon = icons[i % icons.length];
@@ -31,7 +26,7 @@ export default function BikeSpecs({ specs }: { specs: SpecItem[] }) {
                   {s.top}
                 </p>
               )}
-              <p className="text-[14.5px] font-bold leading-tight tracking-[-0.01em] text-[#1C1C1A] lg:text-[15.5px]">
+              <p className="text-[14.5px] leading-tight font-bold tracking-[-0.01em] text-[#1C1C1A] lg:text-[15.5px]">
                 {s.value}
               </p>
               <p className="mt-0.5 text-[12px] leading-tight text-[#1C1C1A]/70 lg:text-[12.5px]">

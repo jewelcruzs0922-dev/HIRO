@@ -2,7 +2,7 @@
 
 import { m } from "framer-motion";
 import Image from "next/image";
-import Button from "./Button";
+import Button from "@/components/ui/Button";
 
 export default function Hero() {
   return (
@@ -30,7 +30,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
-            className="mb-4 text-[clamp(2.15rem,7vw,4.25rem)] font-extrabold leading-[1.05] tracking-[-0.03em] text-white sm:mb-5"
+            className="mb-4 text-[clamp(2.15rem,7vw,4.25rem)] leading-[1.05] font-extrabold tracking-[-0.03em] text-white sm:mb-5"
           >
             A Cleaner
             <br />

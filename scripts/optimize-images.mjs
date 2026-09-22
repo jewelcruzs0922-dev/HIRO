@@ -31,9 +31,11 @@ for (const file of files) {
   const input = path.join(publicDir, file);
   const output = path.join(publicDir, `${base}.webp`);
   const before = (await stat(input)).size;
-  await sharp(input).webp({ quality: 82, effort: 5 }).toFile(output);
+  await sharp(input).webp({ quality: 72, effort: 6 }).toFile(output);
   const after = (await stat(output)).size;
-  console.log(`${file} -> ${base}.webp (${(before / 1024).toFixed(0)}KB -> ${(after / 1024).toFixed(0)}KB)`);
+  console.log(
+    `${file} -> ${base}.webp (${(before / 1024).toFixed(0)}KB -> ${(after / 1024).toFixed(0)}KB)`,
+  );
   await unlink(input);
 }
 

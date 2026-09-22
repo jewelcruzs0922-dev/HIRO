@@ -4,15 +4,17 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import { ShoppingBag, Menu, X } from "lucide-react";
 import Link from "next/link";
-import { useCart } from "./CartProvider";
-import { navLinks, sectionIds } from "@/lib/nav";
+import { useRouter } from "next/navigation";
+import { useCart } from "@/components/cart";
+import { navLinks } from "@/lib/nav";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeId, setActiveId] = useState("home");
   const { count, isOpen: cartOpen, openCart, closeCart } = useCart();
+  const router = useRouter();
   const menuRef = useRef<HTMLElement | null>(null);
   const menuButtonRef = useRef<HTMLButtonElement | null>(null);
   const cartButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -26,12 +28,7 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [menuOpen]);
+  useBodyScrollLock(menuOpen);
 
   useEffect(() => {
     if (wasMenuOpen.current && !menuOpen) {
@@ -46,26 +43,6 @@ export default function Header() {
     }
     wasCartOpen.current = cartOpen;
   }, [cartOpen]);
-
-  useEffect(() => {
-    const sections = sectionIds
-      .map((id) => document.getElementById(id))
-      .filter((el): el is HTMLElement => Boolean(el));
-    if (sections.length === 0) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (visible?.target.id) setActiveId(visible.target.id);
-      },
-      { rootMargin: "-40% 0px -45% 0px", threshold: [0, 0.25, 0.5, 0.75] }
-    );
-
-    sections.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
 
@@ -90,7 +67,7 @@ export default function Header() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
+        className={`fixed top-0 right-0 left-0 z-50 transition-colors duration-300 ${
           scrolled || menuOpen
             ? "bg-[#1A1A1A]/92 backdrop-blur-sm"
             : "bg-[#1A1A1A]/80 backdrop-blur-sm"
@@ -104,25 +81,15 @@ export default function Header() {
           </Link>
 
           <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
-            {navLinks.map((link) => {
-              const id = link.href.slice(1);
-              const isActive = activeId === id;
-              return (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  aria-current={isActive ? "location" : undefined}
-                  className={`relative inline-flex min-h-[44px] items-center pb-0.5 text-[13.5px] font-medium tracking-[0.01em] transition-colors ${
-                    isActive ? "text-white" : "text-white/75 hover:text-white"
-                  }`}
-                >
-                  {link.label}
-                  {isActive && (
-                    <span className="absolute bottom-2 left-0 h-[2px] w-full rounded-full bg-white" />
-                  )}
-                </a>
-              );
-            })}
+            {navLinks.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                className="inline-flex min-h-[44px] items-center pb-0.5 text-[13.5px] font-medium tracking-[0.01em] text-white/75 transition-colors hover:text-white"
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
 
           <div className="flex items-center gap-3 sm:gap-5">
@@ -140,7 +107,7 @@ export default function Header() {
               <ShoppingBag size={20} strokeWidth={1.6} aria-hidden />
               {count > 0 && (
                 <span
-                  className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#4A7858] px-1 text-[10px] font-bold leading-none text-white"
+                  className="absolute top-1.5 right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#4A7858] px-1 text-[10px] leading-none font-bold text-white"
                   aria-hidden
                 >
                   {count}
@@ -155,7 +122,11 @@ export default function Header() {
               className="relative z-10 -mr-2 flex h-11 w-11 items-center justify-center text-white lg:hidden"
               onClick={toggleMenu}
             >
-              {menuOpen ? <X size={24} aria-hidden /> : <Menu size={24} aria-hidden />}
+              {menuOpen ? (
+                <X size={24} aria-hidden />
+              ) : (
+                <Menu size={24} aria-hidden />
+              )}
             </button>
           </div>
         </div>
@@ -173,41 +144,36 @@ export default function Header() {
             aria-label="Site menu"
             className="fixed inset-0 z-40 bg-[#1A1A1A]/98 lg:hidden"
           >
-            <button
-              type="button"
-              aria-label="Close menu"
-              onClick={closeMenu}
-              className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center text-white/80 hover:text-white"
-            >
-              <X size={24} aria-hidden />
-            </button>
             <nav
               ref={menuRef}
               className="flex h-full flex-col items-center justify-center gap-7 px-6"
               aria-label="Mobile"
             >
-              {navLinks.map((link, i) => {
-                const isActive = activeId === link.href.slice(1);
-                return (
-                  <m.a
-                    key={link.label}
-                    href={link.href}
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.05 + i * 0.06, duration: 0.35 }}
-                    aria-current={isActive ? "location" : undefined}
-                    className={`relative min-h-[44px] text-[20px] font-medium sm:text-[22px] ${
-                      isActive ? "text-white" : "text-white/65"
-                    }`}
-                    onClick={closeMenu}
-                  >
-                    {link.label}
-                    {isActive && (
-                      <span className="absolute -bottom-1 left-0 h-[2px] w-full rounded-full bg-white" />
-                    )}
-                  </m.a>
-                );
-              })}
+              <button
+                type="button"
+                aria-label="Close menu"
+                onClick={closeMenu}
+                className="absolute top-4 right-4 z-10 flex h-11 w-11 items-center justify-center text-white/80 hover:text-white"
+              >
+                <X size={24} aria-hidden />
+              </button>
+              {navLinks.map((link, i) => (
+                <m.a
+                  key={link.label}
+                  href={link.href}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.05 + i * 0.06, duration: 0.35 }}
+                  className="min-h-[44px] text-[20px] font-medium text-white/65 sm:text-[22px]"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    closeMenu();
+                    router.push(link.href);
+                  }}
+                >
+                  {link.label}
+                </m.a>
+              ))}
             </nav>
           </m.div>
         )}

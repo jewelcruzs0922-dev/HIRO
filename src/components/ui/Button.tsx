@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 interface ButtonProps {
   href?: string;
@@ -11,6 +12,7 @@ interface ButtonProps {
   "aria-expanded"?: boolean;
   "aria-controls"?: string;
   buttonRef?: React.Ref<HTMLButtonElement>;
+  showArrow?: boolean;
 }
 
 export default function Button({
@@ -24,6 +26,7 @@ export default function Button({
   "aria-expanded": ariaExpanded,
   "aria-controls": ariaControls,
   buttonRef,
+  showArrow = true,
 }: ButtonProps) {
   const base =
     "group inline-flex min-h-[48px] items-center justify-center gap-2.5 rounded-[8px] px-5 py-3 text-[14px] font-medium tracking-[0.01em] transition-all duration-200 sm:px-6";
@@ -38,18 +41,32 @@ export default function Button({
   const content = (
     <>
       {children}
-      <ArrowRight
-        size={16}
-        strokeWidth={1.8}
-        aria-hidden
-        className="transition-transform duration-200 group-hover:translate-x-1"
-      />
+      {showArrow && (
+        <ArrowRight
+          size={16}
+          strokeWidth={1.8}
+          aria-hidden
+          className="transition-transform duration-200 group-hover:translate-x-1"
+        />
+      )}
     </>
   );
 
   const classes = `${base} ${styles[variant]} ${className}`;
 
   if (href !== undefined) {
+    if (href.startsWith("/") && !href.startsWith("/#")) {
+      return (
+        <Link
+          href={href}
+          onClick={onClick}
+          className={classes}
+          aria-label={ariaLabel}
+        >
+          {content}
+        </Link>
+      );
+    }
     return (
       <a href={href} onClick={onClick} className={classes} aria-label={ariaLabel}>
         {content}

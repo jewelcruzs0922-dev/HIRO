@@ -2,19 +2,14 @@ import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
 import { LazyMotion, domAnimation, MotionConfig } from "framer-motion";
 import "./globals.css";
-import { CartProvider } from "@/components/CartProvider";
+import { CartProvider, CartDrawer, CartToast } from "@/components/cart";
 import { siteUrl } from "@/lib/site";
+import { featuredBikes } from "@/lib/bikes";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
-
-const products = [
-  { name: "HIRO Trail", price: "3290", priceCurrency: "EUR" },
-  { name: "HIRO City", price: "2490", priceCurrency: "EUR" },
-  { name: "HIRO Fold", price: "1990", priceCurrency: "EUR" },
-] as const;
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -25,8 +20,7 @@ const jsonLd = {
       name: "HIRO",
       url: siteUrl,
       logo: `${siteUrl}/hiro-hero.webp`,
-      description:
-        "Premium electric bikes engineered for a cleaner planet.",
+      description: "Premium electric bikes engineered for a cleaner planet.",
     },
     {
       "@type": "WebSite",
@@ -35,17 +29,19 @@ const jsonLd = {
       name: "HIRO",
       publisher: { "@id": `${siteUrl}/#organization` },
     },
-    ...products.map((product, index) => ({
+    ...featuredBikes.map((bike) => ({
       "@type": "Product",
-      "@id": `${siteUrl}/#product-${index}`,
-      name: product.name,
-      image: `${siteUrl}/hiro-hero.webp`,
-      description: `${product.name} electric bike`,
+      "@id": `${siteUrl}/#product-${bike.id}`,
+      name: bike.name,
+      image: `${siteUrl}${bike.colors[0].image}`,
+      description: bike.description,
       brand: { "@type": "Brand", name: "HIRO" },
+      url: `${siteUrl}/#bikes`,
       offers: {
         "@type": "Offer",
-        price: product.price,
-        priceCurrency: product.priceCurrency,
+        url: `${siteUrl}/#bikes`,
+        price: bike.price.replace(/[€,]/g, ""),
+        priceCurrency: "EUR",
         availability: "https://schema.org/PreOrder",
       },
     })),
@@ -98,29 +94,31 @@ export const viewport: Viewport = {
   themeColor: "#F7F5F1",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={geistSans.variable}>
-      <body className="min-h-screen bg-paper text-charcoal antialiased">
+      <body className="bg-paper text-charcoal min-h-screen antialiased">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+          }}
         />
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-[8px] focus:bg-[#1A1A1A] focus:px-4 focus:py-3 focus:text-sm focus:font-medium focus:text-white"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-[8px] focus:bg-[#1A1A1A] focus:px-4 focus:py-3 focus:text-sm focus:font-medium focus:text-white"
         >
           Skip to content
         </a>
-        <CartProvider>
-          <LazyMotion features={domAnimation}>
-            <MotionConfig reducedMotion="user">{children}</MotionConfig>
-          </LazyMotion>
-        </CartProvider>
+        <LazyMotion features={domAnimation}>
+          <MotionConfig reducedMotion="user">
+            <CartProvider>
+              {children}
+              <CartDrawer />
+              <CartToast />
+            </CartProvider>
+          </MotionConfig>
+        </LazyMotion>
       </body>
     </html>
   );
