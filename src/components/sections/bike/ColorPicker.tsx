@@ -42,7 +42,7 @@ export default function ColorPicker({
               className={`block h-9 w-9 rounded-full border-2 transition-all ${
                 activeColorId === c.id
                   ? "border-[#2F5D3A] shadow-[0_0_0_3px_rgba(47,93,58,0.2)]"
-                  : "border-[#1C1C1A]/15 hover:border-[#1C1C1A]/40"
+                  : "border-[#1C1C1A]/50 hover:border-[#1C1C1A]/70"
               }`}
               style={{ backgroundColor: c.hex }}
             />

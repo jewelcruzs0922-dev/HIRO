@@ -98,7 +98,7 @@ export default function CartDrawer() {
 
                         <div className="mt-3 flex items-center justify-between gap-3">
                           <div
-                            className="inline-flex items-center rounded-[6px] border border-white/15"
+                            className="inline-flex items-center rounded-[6px] border border-white/35"
                             role="group"
                             aria-label={`Quantity for ${item.label}`}
                           >

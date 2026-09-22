@@ -18,7 +18,7 @@ export default function QuantityStepper({ value, onChange }: QuantityStepperProp
       <div
         role="group"
         aria-labelledby="quantity-label"
-        className="inline-flex items-center rounded-lg border border-[#1C1C1A]/15"
+        className="inline-flex items-center rounded-lg border border-[#1C1C1A]/50"
       >
         <button
           type="button"

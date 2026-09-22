@@ -38,7 +38,7 @@ export default function FieldInput({
         className={`min-h-[48px] w-full rounded-[8px] border bg-white px-4 text-[15px] text-[#1C1C1A] transition-colors outline-none placeholder:text-[#1C1C1A]/65 ${
           error
             ? "border-red-600 focus:border-red-600"
-            : "border-[#1C1C1A]/20 focus:border-[#2F5D3A]"
+            : "border-[#1C1C1A]/50 focus:border-[#2F5D3A]"
         }`}
       />
       {error && (

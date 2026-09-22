@@ -200,7 +200,7 @@ export default function CheckoutForm() {
                 placeholder="Door code, safe place, landmark…"
                 value={form.notes}
                 onChange={(e) => setField("notes", e.target.value)}
-                className="min-h-[88px] w-full rounded-[8px] border border-[#1C1C1A]/20 bg-white px-4 py-3 text-[15px] text-[#1C1C1A] transition-colors outline-none placeholder:text-[#1C1C1A]/65 focus:border-[#2F5D3A]"
+                className="min-h-[88px] w-full rounded-[8px] border border-[#1C1C1A]/50 bg-white px-4 py-3 text-[15px] text-[#1C1C1A] transition-colors outline-none placeholder:text-[#1C1C1A]/65 focus:border-[#2F5D3A]"
               />
             </div>
           </SectionCard>

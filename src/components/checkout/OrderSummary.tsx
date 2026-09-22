@@ -57,7 +57,7 @@ export default function OrderSummary() {
                 </p>
                 <div className="mt-2.5 flex items-center justify-between gap-2">
                   <div
-                    className="inline-flex items-center rounded-[6px] border border-[#1C1C1A]/12"
+                    className="inline-flex items-center rounded-[6px] border border-[#1C1C1A]/50"
                     role="group"
                     aria-label={`Quantity for ${item.label}`}
                   >
