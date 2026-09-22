@@ -18,6 +18,13 @@ export default defineConfig({
         channel: process.env.CI ? undefined : "msedge",
       },
     },
+    {
+      name: "mobile",
+      use: {
+        ...devices["Pixel 7"],
+        channel: process.env.CI ? undefined : "msedge",
+      },
+    },
   ],
   webServer: {
     command: process.env.CI ? "npm run start" : "npm run dev",
