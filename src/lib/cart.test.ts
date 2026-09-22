@@ -15,6 +15,7 @@ import {
 
 const item = (overrides: Partial<CartItem> = {}): CartItem => ({
   id: 1,
+  sku: "trail:green",
   qty: 1,
   label: "HIRO Trail (Forest Green)",
   unitPrice: 3290,
@@ -36,35 +37,96 @@ describe("cartCount / cartSubtotal", () => {
 
 describe("addItem", () => {
   it("appends a new item", () => {
-    const items = addItem([], { id: 1, qty: 1, label: "A", unitPrice: 10 });
+    const items = addItem([], {
+      id: 1,
+      sku: "trail:green",
+      qty: 1,
+      label: "A",
+      unitPrice: 10,
+    });
     expect(items).toHaveLength(1);
-    expect(items[0]).toEqual({ id: 1, qty: 1, label: "A", unitPrice: 10 });
+    expect(items[0]).toEqual({
+      id: 1,
+      sku: "trail:green",
+      qty: 1,
+      label: "A",
+      unitPrice: 10,
+    });
   });
 
-  it("merges quantities when the label matches, keeping the original id", () => {
-    const first = addItem([], { id: 1, qty: 2, label: "A", unitPrice: 10 });
-    const merged = addItem(first, { id: 7, qty: 3, label: "A", unitPrice: 10 });
+  it("merges quantities when the sku matches, keeping the original id", () => {
+    const first = addItem([], {
+      id: 1,
+      sku: "trail:green",
+      qty: 2,
+      label: "A",
+      unitPrice: 10,
+    });
+    const merged = addItem(first, {
+      id: 7,
+      sku: "trail:green",
+      qty: 3,
+      label: "A renamed",
+      unitPrice: 10,
+    });
     expect(merged).toHaveLength(1);
     expect(merged[0].id).toBe(1);
     expect(merged[0].qty).toBe(5);
   });
 
+  it("keeps items separate when skus differ even if labels match", () => {
+    const first = addItem([], {
+      id: 1,
+      sku: "trail:green",
+      qty: 1,
+      label: "Same label",
+      unitPrice: 10,
+    });
+    const second = addItem(first, {
+      id: 2,
+      sku: "city:white",
+      qty: 1,
+      label: "Same label",
+      unitPrice: 10,
+    });
+    expect(second).toHaveLength(2);
+  });
+
   it("clamps incoming quantity to at least 1 and at most MAX_QTY", () => {
-    const zero = addItem([], { id: 1, qty: 0, label: "A", unitPrice: 10 });
+    const zero = addItem([], {
+      id: 1,
+      sku: "trail:green",
+      qty: 0,
+      label: "A",
+      unitPrice: 10,
+    });
     expect(zero[0].qty).toBe(1);
 
-    const huge = addItem([], { id: 1, qty: 99, label: "A", unitPrice: 10 });
+    const huge = addItem([], {
+      id: 1,
+      sku: "trail:green",
+      qty: 99,
+      label: "A",
+      unitPrice: 10,
+    });
     expect(huge[0].qty).toBe(MAX_QTY);
   });
 
   it("clamps a merge that would exceed MAX_QTY", () => {
     const almost = addItem([], {
       id: 1,
+      sku: "trail:green",
       qty: MAX_QTY - 1,
       label: "A",
       unitPrice: 10,
     });
-    const merged = addItem(almost, { id: 2, qty: 5, label: "A", unitPrice: 10 });
+    const merged = addItem(almost, {
+      id: 2,
+      sku: "trail:green",
+      qty: 5,
+      label: "A",
+      unitPrice: 10,
+    });
     expect(merged[0].qty).toBe(MAX_QTY);
   });
 });
@@ -115,9 +177,10 @@ describe("serializeCart / parseCart", () => {
   it("drops malformed entries and clamps valid quantities", () => {
     const raw = JSON.stringify([
       item({ id: 1, qty: 99 }),
-      { id: "nope", qty: 1, label: "bad", unitPrice: 5 },
-      { id: 3, qty: 0, label: "zero", unitPrice: 5 },
-      { id: 4, qty: 1, label: "ok", unitPrice: -1 },
+      { id: "nope", sku: "a:b", qty: 1, label: "bad", unitPrice: 5 },
+      { id: 3, sku: "a:b", qty: 0, label: "zero", unitPrice: 5 },
+      { id: 4, sku: "a:b", qty: 1, label: "ok", unitPrice: -1 },
+      { id: 5, qty: 1, label: "missing sku", unitPrice: 5 },
     ]);
     const parsed = parseCart(raw);
     expect(parsed).toHaveLength(1);
@@ -126,6 +189,6 @@ describe("serializeCart / parseCart", () => {
   });
 
   it("exposes a versioned storage key", () => {
-    expect(CART_STORAGE_KEY).toBe("hiro-cart-v1");
+    expect(CART_STORAGE_KEY).toBe("hiro-cart-v2");
   });
 });

@@ -40,7 +40,7 @@ const jsonLd = {
       offers: {
         "@type": "Offer",
         url: `${siteUrl}/#bikes`,
-        price: bike.price.replace(/[€,]/g, ""),
+        price: bike.price.toString(),
         priceCurrency: "EUR",
         availability: "https://schema.org/PreOrder",
       },
@@ -106,7 +106,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-[8px] focus:bg-[#1A1A1A] focus:px-4 focus:py-3 focus:text-sm focus:font-medium focus:text-white"
+          className="focus:bg-ink sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-[8px] focus:px-4 focus:py-3 focus:text-sm focus:font-medium focus:text-white"
         >
           Skip to content
         </a>

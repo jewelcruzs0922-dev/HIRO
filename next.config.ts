@@ -1,10 +1,13 @@
 import type { NextConfig } from "next";
 
-// React needs eval() for debugging features in dev mode only.
-const scriptSrc =
-  process.env.NODE_ENV === "production"
-    ? "script-src 'self' 'unsafe-inline'"
-    : "script-src 'self' 'unsafe-inline' 'unsafe-eval'";
+const isDev = process.env.NODE_ENV !== "production";
+
+// Next.js inline hydration scripts require 'unsafe-inline' when pages are
+// statically generated (a nonce would force dynamic rendering — see README).
+// Dev additionally needs eval (React debugging) + inline (react-refresh).
+const scriptSrc = isDev
+  ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
+  : "script-src 'self' 'unsafe-inline'";
 
 const securityHeaders = [
   {
@@ -13,7 +16,7 @@ const securityHeaders = [
   },
   {
     key: "X-Frame-Options",
-    value: "SAMEORIGIN",
+    value: "DENY",
   },
   {
     key: "Referrer-Policy",
@@ -36,14 +39,21 @@ const securityHeaders = [
       "img-src 'self' blob: data:",
       "font-src 'self'",
       "connect-src 'self'",
-      "frame-ancestors 'self'",
+      "object-src 'none'",
+      "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
+      "upgrade-insecure-requests",
     ].join("; "),
   },
 ];
 
 const nextConfig: NextConfig = {
+  experimental: {
+    sri: {
+      algorithm: "sha256",
+    },
+  },
   async headers() {
     return [
       {

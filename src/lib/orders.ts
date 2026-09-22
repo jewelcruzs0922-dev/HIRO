@@ -17,13 +17,21 @@ export interface PlacedOrder {
 
 const STORAGE_KEY = "hiro-last-order";
 
-export function saveOrder(order: PlacedOrder): void {
-  window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(order));
+export function saveOrder(order: PlacedOrder): boolean {
+  try {
+    window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(order));
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export function createOrderId(): string {
   const stamp = Date.now().toString(36).toUpperCase();
-  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+  const rand =
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID().replace(/-/g, "").slice(0, 8).toUpperCase()
+      : Math.random().toString(36).slice(2, 10).toUpperCase();
   return `HIRO-${stamp}-${rand}`;
 }
 

@@ -19,7 +19,7 @@ export default function Mission() {
         </Reveal>
 
         <Reveal duration={0.7} delay={0.12} y={0} margin="-80px">
-          <div className="flex h-full flex-col justify-center bg-[#4F6352] px-5 py-12 sm:px-8 sm:py-14 md:px-12 md:py-16 lg:px-16 lg:py-20">
+          <div className="bg-mission flex h-full flex-col justify-center px-5 py-12 sm:px-8 sm:py-14 md:px-12 md:py-16 lg:px-16 lg:py-20">
             <span className="mb-3 text-[12px] font-semibold tracking-[0.2em] text-white/80 uppercase sm:mb-4 sm:text-[12.5px]">
               Our Mission
             </span>

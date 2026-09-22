@@ -32,10 +32,10 @@ export default function Button({
     "group inline-flex min-h-[48px] items-center justify-center gap-2.5 rounded-[8px] px-5 py-3 text-[14px] font-medium tracking-[0.01em] transition-all duration-200 sm:px-6";
 
   const styles = {
-    primary: "bg-[#4A7858] text-white hover:bg-[#3F684C]",
+    primary: "bg-cta text-white hover:bg-cta-hover",
     outline:
-      "border border-charcoal/25 text-charcoal hover:border-charcoal/50 hover:bg-charcoal/[0.03]",
-    white: "bg-white text-[#2A3A2C] hover:bg-[#F5F0EB]",
+      "border border-charcoal/25 text-charcoal hover:border-charcoal/50 hover:bg-charcoal/5",
+    white: "bg-white text-pine hover:bg-canvas",
   };
 
   const content = (

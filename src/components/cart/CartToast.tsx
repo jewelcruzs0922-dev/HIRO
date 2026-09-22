@@ -19,7 +19,7 @@ export default function CartToast() {
             exit={{ opacity: 0, y: 8 }}
             transition={{ duration: 0.25 }}
             role="status"
-            className="rounded-[8px] bg-[#1A1A1A] px-4 py-3 text-[13.5px] font-medium text-white shadow-lg"
+            className="bg-ink rounded-[8px] px-4 py-3 text-[13.5px] font-medium text-white shadow-lg"
           >
             {toast}
           </m.div>

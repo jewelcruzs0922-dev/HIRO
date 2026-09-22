@@ -17,10 +17,10 @@ export default function ColorPicker({
     <div className="mb-6 sm:mb-7">
       <p
         id="color-label"
-        className="mb-3 text-[13px] font-semibold tracking-[0.12em] text-[#1C1C1A]/70 uppercase"
+        className="text-charcoal/70 mb-3 text-[13px] font-semibold tracking-[0.12em] uppercase"
       >
         Color —{" "}
-        <span className="font-medium tracking-normal text-[#1C1C1A]/70 normal-case">
+        <span className="text-charcoal/70 font-medium tracking-normal normal-case">
           {active.name}
         </span>
       </p>
@@ -41,8 +41,8 @@ export default function ColorPicker({
             <span
               className={`block h-9 w-9 rounded-full border-2 transition-all ${
                 activeColorId === c.id
-                  ? "border-[#2F5D3A] shadow-[0_0_0_3px_rgba(47,93,58,0.2)]"
-                  : "border-[#1C1C1A]/50 hover:border-[#1C1C1A]/70"
+                  ? "border-forest shadow-[0_0_0_3px_rgba(47,93,58,0.2)]"
+                  : "border-charcoal/50 hover:border-charcoal/70"
               }`}
               style={{ backgroundColor: c.hex }}
             />

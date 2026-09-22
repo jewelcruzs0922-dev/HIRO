@@ -6,10 +6,6 @@ export interface BikeColor {
   widthPct: number;
 }
 
-export function parseEuroPrice(price: string): number {
-  return Number(price.replace(/[^0-9]/g, ""));
-}
-
 export function formatEuro(amount: number): string {
   return new Intl.NumberFormat("en-IE", {
     style: "currency",
@@ -31,7 +27,7 @@ export interface Bike {
   tagline: string;
   series: string;
   description: string;
-  price: string;
+  price: number;
   colors: BikeColor[];
   specs: SpecItem[];
 }
@@ -44,7 +40,7 @@ export const featuredBikes: Bike[] = [
     series: "Forest Series · Adventure E-Bike",
     description:
       "The HIRO Trail is built for those who want the freedom to explore — from busy streets to rugged trails. With a powerful motor, long-lasting battery, and sleek design, it's your perfect all-around e-bike.",
-    price: "€3,290",
+    price: 3290,
     colors: [
       {
         id: "green",
@@ -82,7 +78,7 @@ export const featuredBikes: Bike[] = [
     series: "Urban Series · Commuter E-Bike",
     description:
       "Designed for the daily commute and weekend explorations. The HIRO City delivers smooth, silent power through city streets with effortless style and all-day comfort.",
-    price: "€2,490",
+    price: 2490,
     colors: [
       {
         id: "white",
@@ -120,7 +116,7 @@ export const featuredBikes: Bike[] = [
     series: "Urban Series · Folding E-Bike",
     description:
       "Fold it, carry it, ride it. The HIRO Fold is engineered for urban living where space is premium but freedom is non-negotiable — ready for trains, offices, and apartments.",
-    price: "€1,990",
+    price: 1990,
     colors: [
       {
         id: "lemon",

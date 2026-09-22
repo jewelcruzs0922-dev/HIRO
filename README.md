@@ -68,7 +68,7 @@ NEXT_PUBLIC_SITE_URL=https://your-deployment-url.vercel.app
   - Simulated payment — no card data, no network writes
 - **Mission** split section
 - **Footer** with mountain silhouette, nav, contact email
-- **Tests:** 35 unit (Vitest) + 16 e2e (Playwright, desktop + mobile) with axe WCAG A/AA in CI — including the populated checkout and confirmation
+- **Tests:** 37 unit (Vitest) + 16 e2e (Playwright, desktop + mobile) with axe WCAG A/AA in CI — including the populated checkout and confirmation
 - **A11y:** skip link, landmarks, `aria-*` on controls, focus-visible styles, reduced-motion support
 - **SEO:** metadata, canonical URL, Open Graph / Twitter cards, JSON-LD, `robots.txt`, `sitemap.xml`
 - **Responsive:** mobile / tablet / desktop breakpoints
@@ -117,27 +117,27 @@ src/
         BikeOverview.tsx     # default (collapsed) view
         BikeDetails.tsx      # expanded configurator view
         ColorPicker.tsx
-        QuantityStepper.tsx
         BikeSpecs.tsx
       index.ts
     ui/
       Button.tsx             # renders <Link>, <a>, or <button> by intent
+      QuantityStepper.tsx    # shared ± control (cart, order summary, configurator)
       Reveal.tsx             # client scroll-reveal wrapper
   hooks/
     useBodyScrollLock.ts
     useFocusTrap.ts
   lib/
-    bikes.ts                 # shared bike catalog (UI + JSON-LD)
-    cart.ts                  # pure cart reducers + storage parse/serialize
+    bikes.ts                 # shared catalog — numeric prices (UI + JSON-LD)
+    cart.ts                  # pure cart reducers + storage parse/serialize (SKU lines, v2)
     cartStore.ts             # external cart store (subscribe/snapshot/commit)
     checkout.ts              # form fields, validation, delivery estimate
-    orders.ts                # order id / sessionStorage helpers
+    orders.ts                # crypto.randomUUID ids / sessionStorage helpers
     nav.ts                   # shared nav links
     site.ts                  # canonical site URL
     constants.ts
-    cart.test.ts             # vitest — cart math, clamping, storage parsing
+    cart.test.ts             # vitest — cart math, SKU merge, storage parsing
     checkout.test.ts         # vitest — validation, line images, delivery dates
-    orders.test.ts           # vitest — stored-order type guard
+    orders.test.ts           # vitest — stored-order guard, order id shape
 e2e/
   checkout.spec.ts           # full purchase flow + edge cases
   a11y.spec.ts               # axe WCAG A/AA on key routes
@@ -155,6 +155,10 @@ public/
 
 - **Feature folders** (`cart/`, `checkout/`, `layout/`, `sections/`, `ui/`) with barrel exports — consumers import from `@/components/<feature>`, never across private internals.
 - **Cart is an external store** (`lib/cartStore.ts`): pure reducers in `lib/cart.ts`, persistence + cross-tab sync in the store, React glue via `useSyncExternalStore`. No setState-in-effect hydration, no write-before-load race.
+- **Cart identity is the SKU** — lines merge/compare by `sku`, not display label, and persist under the `hiro-cart-v2` key with schema-validated parsing (bad data falls back to an empty cart).
+- **Prices are numbers** — `formatEuro` renders them; JSON-LD gets the raw number. No string-to-number parsing anywhere.
+- **One shared `QuantityStepper`** (`ui/`) drives the cart drawer, order summary, and configurator via `size` / `tone` props — replaces three duplicated implementations.
+- **Order writes fail safely** — `saveOrder` returns success/failure; checkout keeps the button usable (try/finally) and shows an inline error if sessionStorage is unavailable. Order ids use `crypto.randomUUID()`.
 - **God components split**: `CartProvider` (state) / `CartDrawer` (dialog) / `CartToast` (announcements); `CheckoutForm` (orchestration) + `FieldInput` / `SectionCard` / `OrderSummary`; `FeaturedBike` (state machine) + overview/details/picker views.
 - **Business logic lives in `lib/`**: validation, field defs, delivery estimate, and cart math are pure and framework-free.
 - **Shared hooks**: `useFocusTrap` and `useBodyScrollLock` used by header menu and cart drawer (lock restores prior overflow value).
@@ -163,14 +167,19 @@ public/
 
 ## Design system (tokens)
 
-| Token           | Value                       |
-| --------------- | --------------------------- |
-| Paper / cream   | `#F7F5F1` / `#FAF8F5`       |
-| Charcoal        | `#1C1C1A`                   |
-| Forest (accent) | `#2F5D3A`                   |
-| CTA green       | `#4A7858` (hover `#3F684C`) |
-| Featured bg     | `#F0EDE8`                   |
-| Mission panel   | `#4F6352`                   |
+Defined once in `@theme inline` (`globals.css`); components consume utilities — the only raw hex left in the app is the metadata themeColor and product swatch data.
+
+| Token                                    | Value                             |
+| ---------------------------------------- | --------------------------------- |
+| `paper` / `cream` / `canvas`             | `#F7F5F1` / `#FAF8F5` / `#F5F0EB` |
+| `charcoal` / `ink`                       | `#1C1C1A` / `#1A1A1A`             |
+| `forest`                                 | `#2F5D3A`                         |
+| `cta` / `cta-hover`                      | `#4A7858` / `#3F684C`             |
+| `pine`                                   | `#2A3A2C`                         |
+| `featured`                               | `#F0EDE8`                         |
+| `mission`                                | `#4F6352`                         |
+| `ridge-far` / `ridge-mid` / `ridge-near` | `#242422` / `#2A2A28` / `#1F1F1E` |
+| `shadow-card`                            | `0 1px 2px rgb(28 28 26 / 0.04)`  |
 
 Type: **Geist Sans** via `next/font`.
 
@@ -197,28 +206,29 @@ npm run optimize-images # PNG → WebP in public/
 
 ## Evidence (measured)
 
-_Local production server (`npm run build && npm run start`), Lighthouse mobile emulation._
+_Local production server (`npm run build && npm run start`), Lighthouse v12 mobile emulation._
 
 ### Lighthouse
 
 | Performance | Accessibility | Best practices | SEO     |
 | ----------- | ------------- | -------------- | ------- |
-| **94**      | **100**       | **100**        | **100** |
+| **92**      | **100**       | **100**        | **100** |
 
 | Metric                         | Value   |
 | ------------------------------ | ------- |
 | First Contentful Paint (FCP)   | ~0.77 s |
-| Largest Contentful Paint (LCP) | ~3.1 s  |
-| Total Blocking Time (TBT)      | ~45 ms  |
+| Largest Contentful Paint (LCP) | ~3.2 s  |
+| Total Blocking Time (TBT)      | ~0.10 s |
 | Cumulative Layout Shift (CLS)  | **0**   |
+| Speed Index                    | ~1.0 s  |
 
-Scores vary by a point run-to-run on local hardware; re-measure before publishing claims.
+LCP is the preloaded hero image; under Lighthouse's simulated mobile network (~1.6 Mbps) that image transfer dominates the score — the audit reports **no remaining opportunities > 50 ms**. Scores vary a point or two run-to-run on local hardware; re-measure before publishing claims.
 
 ### Bundle (production `.next/static`, JS + CSS)
 
 | Raw    | Gzip   | Files |
 | ------ | ------ | ----- |
-| ~813KB | ~252KB | 17    |
+| ~812KB | ~252KB | 17    |
 
 Largest first-load chunk ≈ **224KB raw** (shared framework/vendor).
 
@@ -231,12 +241,15 @@ Largest first-load chunk ≈ **224KB raw** (shared framework/vendor).
 
 ```bash
 npm run test
-# 35 passed — cart math/parsing, checkout validation, order storage guard, delivery dates
+# 37 passed — cart math/SKU merge/storage parsing, checkout validation,
+# order storage guard + id shape, delivery dates
 
 npm run test:e2e
-# 16 passed — full order flow on desktop + mobile, guards, scroll-spy,
-# mobile-menu keyboard flow, 4× axe per viewport (home, empty checkout,
-# fallback confirmation, populated checkout + confirmation)
+# 16 passed, 2 skipped (viewport-gated by design) — full order flow on
+# desktop + mobile, guards, scroll-spy, mobile-menu keyboard flow,
+# 4× axe per viewport (home, empty checkout, fallback confirmation,
+# populated checkout + confirmation). CI runs against `npm run start`
+# with the production CSP + SRI headers (verified locally the same way).
 ```
 
 ---
@@ -245,9 +258,12 @@ npm run test:e2e
 
 - Unused starter components and stock assets removed
 - Heavy PNGs → WebP (`scripts/optimize-images.mjs`, quality 72); re-encoded catalog ~2.8MB → ~2.4MB
-- Hero uses `preload`; below-the-fold images use `fill` + `sizes`
+- Hero uses `preload` with full `imagesrcset`; below-the-fold images use `fill` + `sizes`
 - `LazyMotion` + `m.*`; Benefits / Mission / Footer are **server components** with a thin `Reveal` client wrapper
 - Shared focus-trap hook; `CartProvider` nested **inside** `LazyMotion` so drawer/toast animations run
+- Design tokens in `@theme inline` — components use utilities (`bg-featured`, `text-ink`, …) instead of scattered hex
+- Texture overlay layers below dialogs (`z-index: 30`); bike image width is a CSS variable (zero `!important`)
+- `@media (scripting: none)` forces entrance-animated content visible when JavaScript is unavailable
 
 ---
 
@@ -265,10 +281,12 @@ npm run test:e2e
 
 ## Security notes
 
-- Production security headers via `next.config.ts` (`X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, `Strict-Transport-Security`, `Content-Security-Policy`)
-- CSP: `'unsafe-eval'` **development only** (React debugging); production `script-src` is `'self' 'unsafe-inline'`
+- Production security headers on every route via `next.config.ts`: `X-Content-Type-Options`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy`, `Strict-Transport-Security` (preload), and a locked-down `Content-Security-Policy`
+- CSP hardening: `object-src 'none'`, `frame-ancestors 'none'`, `base-uri 'self'`, `form-action 'self'`, `upgrade-insecure-requests`, `font-src 'self'`, `img-src 'self' blob: data:`
+- `script-src 'self' 'unsafe-inline'` in production — Next.js embeds inline flight/hydration scripts in static HTML; a per-request nonce would **force dynamic rendering** (per Next.js docs), trading this site's static profile for a threat model it doesn't have. `'unsafe-eval'` is development-only (React debugging)
+- Subresource Integrity enabled (`experimental.sri.sha256`) — external scripts ship `integrity` hashes
 - JSON-LD serialized with `<` escaped (`<`)
-- Checkout keeps order data in **sessionStorage only** — no PII leaves the browser
+- Checkout keeps order data in **sessionStorage only** — no PII leaves the browser; payment is simulated (no card fields, no network writes)
 
 ---
 
@@ -276,6 +294,7 @@ npm run test:e2e
 
 - Real payment (Stripe Checkout) + server-side order persistence
 - Lighthouse CI budget in GitHub Actions (fail on score regressions)
+- Nonce-based CSP via middleware if this ever grew dynamic (authenticated data)
 - Product routes (`/bikes/[slug]`) if this grew beyond a single page
 - Visual regression snapshots (Playwright screenshot tests)
 

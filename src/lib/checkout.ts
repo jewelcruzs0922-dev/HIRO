@@ -123,11 +123,11 @@ export function validate(form: FormValues): Partial<Record<FieldKey, string>> {
   return errors;
 }
 
-export function itemImage(label: string): string | null {
-  const bike = featuredBikes.find((b) => label.startsWith(b.name));
+export function itemImage(sku: string): string | null {
+  const [bikeId, colorId] = sku.split(":");
+  const bike = featuredBikes.find((b) => b.id === bikeId);
   if (!bike) return null;
-  const colorName = label.match(/\(([^)]+)\)$/)?.[1];
-  const color = bike.colors.find((c) => c.name === colorName) ?? bike.colors[0];
+  const color = bike.colors.find((c) => c.id === colorId) ?? bike.colors[0];
   return color?.image ?? null;
 }
 

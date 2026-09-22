@@ -28,7 +28,7 @@ export default function Benefits() {
   return (
     <section
       id="sustainability"
-      className="bg-[#FAF8F5] py-14 sm:py-16 md:py-20 lg:py-24"
+      className="bg-cream py-14 sm:py-16 md:py-20 lg:py-24"
       aria-label="Benefits"
     >
       <div className="mx-auto max-w-[1280px] px-5 sm:px-6 md:px-10">
@@ -42,13 +42,13 @@ export default function Benefits() {
               <b.icon
                 size={36}
                 strokeWidth={1.4}
-                className="mb-4 text-[#2F5D3A] sm:mb-5 md:mb-6 md:h-11 md:w-11"
+                className="text-forest mb-4 sm:mb-5 md:mb-6 md:h-11 md:w-11"
                 aria-hidden
               />
-              <h2 className="mb-2 text-[14px] font-bold tracking-[-0.01em] text-[#1C1C1A] sm:text-[15px] md:text-[15.5px]">
+              <h2 className="text-charcoal mb-2 text-[14px] font-bold tracking-[-0.01em] sm:text-[15px] md:text-[15.5px]">
                 {b.title}
               </h2>
-              <p className="text-[13px] leading-[1.6] whitespace-pre-line text-[#1C1C1A]/70 sm:text-[13.5px]">
+              <p className="text-charcoal/70 text-[13px] leading-[1.6] whitespace-pre-line sm:text-[13.5px]">
                 {b.desc}
               </p>
             </Reveal>

@@ -36,7 +36,7 @@ interface CartContextValue {
   toast: string | null;
   openCart: () => void;
   closeCart: () => void;
-  addItem: (qty: number, label: string, unitPrice: number) => void;
+  addItem: (qty: number, sku: string, label: string, unitPrice: number) => void;
   setItemQty: (id: number, qty: number) => void;
   removeItem: (id: number) => void;
   clearCart: () => void;
@@ -62,12 +62,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const count = cartCount(items);
   const subtotal = cartSubtotal(items);
 
-  const addItem = useCallback((qty: number, label: string, unitPrice: number) => {
-    const current = getCartSnapshot();
-    const id = nextCartId(current);
-    commitCart(addItemReducer(current, { id, qty, label, unitPrice }));
-    setToast(`Added ${qty}× ${label} to cart`);
-  }, []);
+  const addItem = useCallback(
+    (qty: number, sku: string, label: string, unitPrice: number) => {
+      const current = getCartSnapshot();
+      const id = nextCartId(current);
+      commitCart(addItemReducer(current, { id, sku, qty, label, unitPrice }));
+      setToast(`Added ${qty}× ${label} to cart`);
+    },
+    [],
+  );
 
   const setItemQty = useCallback((id: number, qty: number) => {
     commitCart(setItemQtyReducer(getCartSnapshot(), id, qty));

@@ -1,9 +1,11 @@
 import Image from "next/image";
 import { m } from "framer-motion";
+import type { CSSProperties } from "react";
 import Button from "@/components/ui/Button";
 import ColorPicker from "./ColorPicker";
-import QuantityStepper from "./QuantityStepper";
+import QuantityStepper from "@/components/ui/QuantityStepper";
 import type { Bike, BikeColor } from "@/lib/bikes";
+import { formatEuro } from "@/lib/bikes";
 
 interface BikeDetailsProps {
   bike: Bike;
@@ -34,7 +36,7 @@ export default function BikeDetails({
             animate={{ opacity: 1 }}
             transition={{ duration: 0.35 }}
             className="bike-img-box h-full"
-            style={{ width: `${activeColor.widthPct}%` }}
+            style={{ "--img-w": `${activeColor.widthPct}%` } as CSSProperties}
           >
             <Image
               src={activeColor.image}
@@ -47,17 +49,17 @@ export default function BikeDetails({
         </div>
 
         <div className="flex flex-col">
-          <span className="mb-3 block text-[13px] font-bold tracking-[0.16em] text-[#2F5D3A] uppercase">
+          <span className="text-forest mb-3 block text-[13px] font-bold tracking-[0.16em] uppercase">
             {bike.name}
           </span>
 
-          <p className="mb-4 text-[13px] text-[#1C1C1A]/70 sm:mb-1">{bike.series}</p>
+          <p className="text-charcoal/70 mb-4 text-[13px] sm:mb-1">{bike.series}</p>
 
-          <p className="mb-5 text-[28px] leading-none font-extrabold tracking-[-0.03em] text-[#1C1C1A] sm:text-[32px]">
-            {bike.price}
+          <p className="text-charcoal mb-5 text-[28px] leading-none font-extrabold tracking-[-0.03em] sm:text-[32px]">
+            {formatEuro(bike.price)}
           </p>
 
-          <p className="mb-6 max-w-[420px] text-[14px] leading-[1.7] text-[#1C1C1A]/70 sm:mb-7 sm:text-[14.5px]">
+          <p className="text-charcoal/70 mb-6 max-w-[420px] text-[14px] leading-[1.7] sm:mb-7 sm:text-[14.5px]">
             {bike.description}
           </p>
 
@@ -67,7 +69,11 @@ export default function BikeDetails({
             onSelect={onColorSelect}
           />
 
-          <QuantityStepper value={qty} onChange={onQtyChange} />
+          <QuantityStepper
+            value={qty}
+            onChange={onQtyChange}
+            className="mb-7 sm:mb-8"
+          />
 
           <div className="flex flex-col items-start gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-5">
             <Button onClick={onAddToCart} className="w-full sm:w-auto">
@@ -76,7 +82,7 @@ export default function BikeDetails({
             <button
               type="button"
               onClick={onClose}
-              className="min-h-[44px] text-[14px] font-medium text-[#1C1C1A]/70 underline-offset-4 transition-colors hover:text-[#1C1C1A] hover:underline"
+              className="text-charcoal/70 hover:text-charcoal min-h-[44px] text-[14px] font-medium underline-offset-4 transition-colors hover:underline"
             >
               Back to overview
             </button>

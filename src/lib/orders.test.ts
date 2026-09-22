@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { isPlacedOrder, parseOrder, type PlacedOrder } from "./orders";
+import {
+  createOrderId,
+  isPlacedOrder,
+  parseOrder,
+  type PlacedOrder,
+} from "./orders";
 
 const order: PlacedOrder = {
   id: "HIRO-ABC123-X9Z2",
@@ -80,5 +85,14 @@ describe("parseOrder", () => {
   it("returns null instead of crashing on tampered fields", () => {
     const tampered = JSON.stringify({ ...order, name: null });
     expect(parseOrder(tampered)).toBeNull();
+  });
+});
+
+describe("createOrderId", () => {
+  it("generates unique HIRO- prefixed ids", () => {
+    const a = createOrderId();
+    const b = createOrderId();
+    expect(a).toMatch(/^HIRO-[0-9A-Z]+-[0-9A-Z]+$/);
+    expect(a).not.toBe(b);
   });
 });

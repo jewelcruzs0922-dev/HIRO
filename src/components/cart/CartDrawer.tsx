@@ -2,10 +2,10 @@
 
 import { useRef } from "react";
 import { AnimatePresence, m } from "framer-motion";
-import { X, Minus, Plus, Trash2 } from "lucide-react";
+import { X, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { MAX_QTY } from "@/lib/constants";
 import { formatEuro } from "@/lib/bikes";
+import QuantityStepper from "@/components/ui/QuantityStepper";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import { useCart } from "./CartProvider";
@@ -52,7 +52,7 @@ export default function CartDrawer() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-            className="fixed top-0 right-0 z-[80] flex h-full w-full max-w-[400px] flex-col bg-[#1A1A1A] text-white shadow-2xl"
+            className="bg-ink fixed top-0 right-0 z-[80] flex h-full w-full max-w-[400px] flex-col text-white shadow-2xl"
           >
             <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 sm:px-6">
               <h2 className="text-[15px] font-bold tracking-[0.02em]">
@@ -97,36 +97,14 @@ export default function CartDrawer() {
                         </div>
 
                         <div className="mt-3 flex items-center justify-between gap-3">
-                          <div
-                            className="inline-flex items-center rounded-[6px] border border-white/35"
-                            role="group"
-                            aria-label={`Quantity for ${item.label}`}
-                          >
-                            <button
-                              type="button"
-                              aria-label={`Decrease quantity of ${item.label}`}
-                              disabled={item.qty <= 1}
-                              onClick={() => setItemQty(item.id, item.qty - 1)}
-                              className="flex h-10 w-10 items-center justify-center text-white/70 transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:text-white/70"
-                            >
-                              <Minus size={14} strokeWidth={2} aria-hidden />
-                            </button>
-                            <span
-                              aria-live="polite"
-                              className="min-w-8 text-center text-[14px] font-semibold tabular-nums"
-                            >
-                              {item.qty}
-                            </span>
-                            <button
-                              type="button"
-                              aria-label={`Increase quantity of ${item.label}`}
-                              disabled={item.qty >= MAX_QTY}
-                              onClick={() => setItemQty(item.id, item.qty + 1)}
-                              className="flex h-10 w-10 items-center justify-center text-white/70 transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:text-white/70"
-                            >
-                              <Plus size={14} strokeWidth={2} aria-hidden />
-                            </button>
-                          </div>
+                          <QuantityStepper
+                            value={item.qty}
+                            onChange={(qty) => setItemQty(item.id, qty)}
+                            size="sm"
+                            tone="dark"
+                            labelPrefix={item.label}
+                            groupLabel={`Quantity for ${item.label}`}
+                          />
 
                           <button
                             type="button"
@@ -156,7 +134,7 @@ export default function CartDrawer() {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-white/70">Shipping</span>
-                    <span className="font-semibold text-[#4A7858]">Free</span>
+                    <span className="text-cta font-semibold">Free</span>
                   </div>
                   <div className="flex items-center justify-between border-t border-white/10 pt-2.5 text-[15px]">
                     <span className="font-bold">Total</span>
@@ -175,7 +153,7 @@ export default function CartDrawer() {
                 className={`min-h-[48px] w-full rounded-[8px] text-[14px] font-medium transition-colors ${
                   items.length === 0
                     ? "pointer-events-none flex cursor-not-allowed items-center justify-center bg-white/10 text-white/50"
-                    : "flex items-center justify-center bg-[#4A7858] text-white hover:bg-[#3F684C]"
+                    : "bg-cta hover:bg-cta-hover flex items-center justify-center text-white"
                 }`}
               >
                 {items.length === 0

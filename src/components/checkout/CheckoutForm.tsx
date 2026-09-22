@@ -34,10 +34,12 @@ export default function CheckoutForm() {
   const [form, setForm] = useState<FormValues>(emptyForm);
   const [errors, setErrors] = useState<Partial<Record<FieldKey, string>>>({});
   const [placing, setPlacing] = useState(false);
+  const [saveFailed, setSaveFailed] = useState(false);
 
   const setField = (key: FieldKey, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
     setErrors((prev) => ({ ...prev, [key]: undefined }));
+    setSaveFailed(false);
   };
 
   const onSubmit = async (e: FormEvent) => {
@@ -54,35 +56,43 @@ export default function CheckoutForm() {
     }
 
     setPlacing(true);
-    await new Promise((r) => setTimeout(r, 700));
+    setSaveFailed(false);
+    try {
+      await new Promise((r) => setTimeout(r, 700));
 
-    saveOrder({
-      id: createOrderId(),
-      email: form.email.trim(),
-      name: form.name.trim(),
-      items: items.map((i) => ({
-        label: i.label,
-        qty: i.qty,
-        unitPrice: i.unitPrice,
-      })),
-      total: subtotal,
-      placedAt: new Date().toISOString(),
-    });
-    clearCart();
-    setPlacing(false);
-    router.push("/checkout/confirmation");
+      const saved = saveOrder({
+        id: createOrderId(),
+        email: form.email.trim(),
+        name: form.name.trim(),
+        items: items.map((i) => ({
+          label: i.label,
+          qty: i.qty,
+          unitPrice: i.unitPrice,
+        })),
+        total: subtotal,
+        placedAt: new Date().toISOString(),
+      });
+      if (!saved) {
+        setSaveFailed(true);
+        return;
+      }
+      clearCart();
+      router.push("/checkout/confirmation");
+    } finally {
+      setPlacing(false);
+    }
   };
 
   if (items.length === 0) {
     return (
       <div className="mx-auto max-w-[560px] px-5 py-20 text-center sm:px-6">
-        <span className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#2F5D3A]/10 text-[#2F5D3A]">
+        <span className="bg-forest/10 text-forest mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full">
           <Package size={26} strokeWidth={1.5} aria-hidden />
         </span>
-        <h1 className="mb-3 text-[clamp(1.75rem,5vw,2.5rem)] font-extrabold tracking-[-0.03em] text-[#1C1C1A]">
+        <h1 className="text-charcoal mb-3 text-[clamp(1.75rem,5vw,2.5rem)] font-extrabold tracking-[-0.03em]">
           Your cart is empty
         </h1>
-        <p className="mb-7 text-[15px] leading-relaxed text-[#1C1C1A]/70">
+        <p className="text-charcoal/70 mb-7 text-[15px] leading-relaxed">
           Add a bike to your cart before checking out. Configure a model, pick a
           colour, and it will show up here.
         </p>
@@ -96,10 +106,10 @@ export default function CheckoutForm() {
   return (
     <div className="mx-auto max-w-[1080px] px-5 py-10 sm:px-6 md:px-10 md:py-14">
       <div className="mb-8">
-        <p className="mb-2 text-[12.5px] font-bold tracking-[0.16em] text-[#2F5D3A] uppercase">
+        <p className="text-forest mb-2 text-[12.5px] font-bold tracking-[0.16em] uppercase">
           Secure checkout
         </p>
-        <h1 className="text-[clamp(1.75rem,5vw,2.5rem)] font-extrabold tracking-[-0.03em] text-[#1C1C1A]">
+        <h1 className="text-charcoal text-[clamp(1.75rem,5vw,2.5rem)] font-extrabold tracking-[-0.03em]">
           Delivery details
         </h1>
       </div>
@@ -114,7 +124,7 @@ export default function CheckoutForm() {
             <li key={step.label} className="flex items-center gap-2 sm:gap-3">
               {i > 0 && (
                 <span
-                  className="hidden h-px w-6 bg-[#1C1C1A]/15 sm:block sm:w-10"
+                  className="bg-charcoal/15 hidden h-px w-6 sm:block sm:w-10"
                   aria-hidden
                 />
               )}
@@ -122,10 +132,10 @@ export default function CheckoutForm() {
                 aria-current={step.state === "current" ? "step" : undefined}
                 className={`inline-flex min-h-[32px] items-center gap-1.5 rounded-full px-3 text-[12.5px] font-semibold ${
                   step.state === "current"
-                    ? "bg-[#2F5D3A] text-white"
+                    ? "bg-forest text-white"
                     : step.state === "done"
-                      ? "bg-[#2F5D3A]/12 text-[#2F5D3A]"
-                      : "bg-[#1C1C1A]/6 text-[#1C1C1A]/65"
+                      ? "bg-forest/12 text-forest"
+                      : "bg-charcoal/6 text-charcoal/65"
                 }`}
               >
                 {step.state === "done" && (
@@ -158,7 +168,7 @@ export default function CheckoutForm() {
                   />
                 ))}
             </div>
-            <p className="mt-3 text-[12.5px] leading-relaxed text-[#1C1C1A]/65">
+            <p className="text-charcoal/65 mt-3 text-[12.5px] leading-relaxed">
               We use email for order updates. In this demo nothing is sent or stored
               on a server.
             </p>
@@ -187,10 +197,10 @@ export default function CheckoutForm() {
             <div className="mt-4">
               <label
                 htmlFor="checkout-notes"
-                className="mb-1.5 block text-[13px] font-semibold text-[#1C1C1A]"
+                className="text-charcoal mb-1.5 block text-[13px] font-semibold"
               >
                 Delivery notes{" "}
-                <span className="font-normal text-[#1C1C1A]/65">(optional)</span>
+                <span className="text-charcoal/65 font-normal">(optional)</span>
               </label>
               <textarea
                 id="checkout-notes"
@@ -200,7 +210,7 @@ export default function CheckoutForm() {
                 placeholder="Door code, safe place, landmark…"
                 value={form.notes}
                 onChange={(e) => setField("notes", e.target.value)}
-                className="min-h-[88px] w-full rounded-[8px] border border-[#1C1C1A]/50 bg-white px-4 py-3 text-[15px] text-[#1C1C1A] transition-colors outline-none placeholder:text-[#1C1C1A]/65 focus:border-[#2F5D3A]"
+                className="border-charcoal/50 text-charcoal placeholder:text-charcoal/65 focus:border-forest min-h-[88px] w-full rounded-[8px] border bg-white px-4 py-3 text-[15px] transition-colors outline-none"
               />
             </div>
           </SectionCard>
@@ -210,19 +220,19 @@ export default function CheckoutForm() {
             title="Payment"
             icon={<Lock size={17} strokeWidth={1.7} />}
           >
-            <div className="rounded-[8px] border border-[#2F5D3A]/25 bg-[#2F5D3A]/6 p-4">
+            <div className="border-forest/25 bg-forest/6 rounded-[8px] border p-4">
               <div className="flex items-start gap-3">
                 <ShieldCheck
                   size={18}
                   strokeWidth={1.7}
-                  className="mt-0.5 shrink-0 text-[#2F5D3A]"
+                  className="text-forest mt-0.5 shrink-0"
                   aria-hidden
                 />
                 <div>
-                  <p className="text-[13.5px] font-semibold text-[#1C1C1A]">
+                  <p className="text-charcoal text-[13.5px] font-semibold">
                     Simulated payment — demo mode
                   </p>
-                  <p className="mt-1 text-[13px] leading-relaxed text-[#1C1C1A]/70">
+                  <p className="text-charcoal/70 mt-1 text-[13px] leading-relaxed">
                     Placing an order does not charge a card or call a payment API.
                     The order lives only in this browser tab’s session storage and
                     disappears when you close the tab.
@@ -235,7 +245,7 @@ export default function CheckoutForm() {
               {["Visa", "Mastercard", "Apple Pay", "iDEAL"].map((method) => (
                 <span
                   key={method}
-                  className="rounded-[6px] border border-[#1C1C1A]/12 bg-[#F7F5F1] px-2.5 py-1 text-[12px] font-medium text-[#1C1C1A]/65"
+                  className="border-charcoal/12 bg-paper text-charcoal/65 rounded-[6px] border px-2.5 py-1 text-[12px] font-medium"
                 >
                   {method}
                 </span>
@@ -248,12 +258,22 @@ export default function CheckoutForm() {
           </SectionCard>
 
           <div className="flex flex-col gap-4 pt-1 sm:flex-row sm:items-center">
+            {saveFailed && (
+              <p
+                role="alert"
+                className="w-full rounded-[8px] border border-red-600/40 bg-red-600/5 px-4 py-3 text-[13.5px] font-medium text-red-700"
+              >
+                We couldn&apos;t save this order to this browser&apos;s session
+                storage (private browsing may block it). Your cart is untouched —
+                allow site data and try again.
+              </p>
+            )}
             <Button type="submit" className="w-full sm:w-auto" showArrow={!placing}>
               {placing ? "Placing order…" : `Place order · ${formatEuro(subtotal)}`}
             </Button>
             <Link
               href="/#bikes"
-              className="inline-flex min-h-[44px] items-center gap-1.5 text-[14px] font-medium text-[#1C1C1A]/70 underline-offset-4 transition-colors hover:text-[#1C1C1A] hover:underline"
+              className="text-charcoal/70 hover:text-charcoal inline-flex min-h-[44px] items-center gap-1.5 text-[14px] font-medium underline-offset-4 transition-colors hover:underline"
             >
               <ChevronLeft size={15} strokeWidth={1.8} aria-hidden />
               Continue shopping

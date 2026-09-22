@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { m, useInView, AnimatePresence } from "framer-motion";
 import { useCart } from "@/components/cart";
-import { featuredBikes, parseEuroPrice } from "@/lib/bikes";
+import { featuredBikes, formatEuro } from "@/lib/bikes";
 import BikeOverview from "./BikeOverview";
 import BikeDetails from "./BikeDetails";
 
@@ -53,7 +53,7 @@ export default function FeaturedBike() {
     setBikeIndex(index);
     setColorId(next.colors[0].id);
     setQty(1);
-    setAnnouncement(`${next.name}, ${next.price}`);
+    setAnnouncement(`${next.name}, ${formatEuro(next.price)}`);
   };
 
   const goNextBike = () => goToBike((bikeIndex + 1) % featuredBikes.length);
@@ -71,13 +71,18 @@ export default function FeaturedBike() {
   };
 
   const handleAddToCart = () => {
-    addItem(qty, `${bike.name} (${activeColor.name})`, parseEuroPrice(bike.price));
+    addItem(
+      qty,
+      `${bike.id}:${activeColor.id}`,
+      `${bike.name} (${activeColor.name})`,
+      bike.price,
+    );
   };
 
   return (
     <section
       id="bikes"
-      className="overflow-x-hidden bg-[#F0EDE8] py-14 sm:py-16 md:py-20 lg:py-24"
+      className="bg-featured overflow-x-hidden py-14 sm:py-16 md:py-20 lg:py-24"
       aria-label="Featured bike"
     >
       <p aria-live="polite" className="sr-only">

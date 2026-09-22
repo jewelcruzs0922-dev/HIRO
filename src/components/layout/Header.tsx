@@ -107,8 +107,8 @@ export default function Header() {
         transition={{ duration: 0.5 }}
         className={`fixed top-0 right-0 left-0 z-50 transition-colors duration-300 ${
           scrolled || menuOpen
-            ? "bg-[#1A1A1A]/92 backdrop-blur-sm"
-            : "bg-[#1A1A1A]/80 backdrop-blur-sm"
+            ? "bg-ink/92 backdrop-blur-sm"
+            : "bg-ink/80 backdrop-blur-sm"
         }`}
       >
         <div className="mx-auto flex h-[64px] max-w-[1280px] items-center justify-between px-5 sm:px-6 md:h-[72px] md:px-10">
@@ -163,7 +163,7 @@ export default function Header() {
               <ShoppingBag size={20} strokeWidth={1.6} aria-hidden />
               {count > 0 && (
                 <span
-                  className="absolute top-1.5 right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#4A7858] px-1 text-[10px] leading-none font-bold text-white"
+                  className="bg-cta absolute top-1.5 right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] leading-none font-bold text-white"
                   aria-hidden
                 >
                   {count}
@@ -198,7 +198,7 @@ export default function Header() {
             role="dialog"
             aria-modal="true"
             aria-label="Site menu"
-            className="fixed inset-0 z-40 bg-[#1A1A1A]/98 lg:hidden"
+            className="bg-ink/98 fixed inset-0 z-40 lg:hidden"
           >
             <nav
               ref={menuRef}

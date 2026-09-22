@@ -2,12 +2,13 @@ import { MAX_QTY } from "@/lib/constants";
 
 export interface CartItem {
   id: number;
+  sku: string;
   qty: number;
   label: string;
   unitPrice: number;
 }
 
-export const CART_STORAGE_KEY = "hiro-cart-v1";
+export const CART_STORAGE_KEY = "hiro-cart-v2";
 
 const clampQty = (qty: number): number =>
   Math.max(1, Math.min(MAX_QTY, Math.floor(qty)));
@@ -22,13 +23,19 @@ export function cartSubtotal(items: CartItem[]): number {
 
 export function addItem(
   items: CartItem[],
-  next: { id: number; qty: number; label: string; unitPrice: number },
+  next: {
+    id: number;
+    sku: string;
+    qty: number;
+    label: string;
+    unitPrice: number;
+  },
 ): CartItem[] {
   const qty = clampQty(next.qty);
-  const existing = items.find((i) => i.label === next.label);
+  const existing = items.find((i) => i.sku === next.sku);
   if (existing) {
     return items.map((i) =>
-      i.label === next.label ? { ...i, qty: clampQty(i.qty + qty) } : i,
+      i.sku === next.sku ? { ...i, qty: clampQty(i.qty + qty) } : i,
     );
   }
   return [...items, { ...next, qty }];
@@ -52,6 +59,8 @@ function isCartItem(value: unknown): value is CartItem {
   const item = value as Record<string, unknown>;
   return (
     typeof item.id === "number" &&
+    typeof item.sku === "string" &&
+    item.sku.length > 0 &&
     typeof item.qty === "number" &&
     typeof item.label === "string" &&
     typeof item.unitPrice === "number" &&

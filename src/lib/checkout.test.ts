@@ -67,17 +67,17 @@ describe("validate", () => {
 });
 
 describe("itemImage", () => {
-  it("resolves the image for a known bike and colour", () => {
-    expect(itemImage("HIRO Trail (Charcoal)")).toBe("/hiro-trail-charcoal.webp");
-    expect(itemImage("HIRO City (Deep Maroon)")).toBe("/hiro-city-maroon.webp");
+  it("resolves the image for a known bike and colour sku", () => {
+    expect(itemImage("trail:charcoal")).toBe("/hiro-trail-charcoal.webp");
+    expect(itemImage("city:maroon")).toBe("/hiro-city-maroon.webp");
   });
 
-  it("falls back to the first colour for an unknown colour name", () => {
-    expect(itemImage("HIRO Trail (Invisible)")).toBe("/hiro-trail-green.webp");
+  it("falls back to the first colour for an unknown colour id", () => {
+    expect(itemImage("trail:invisible")).toBe("/hiro-trail-green.webp");
   });
 
-  it("returns null for unknown labels", () => {
-    expect(itemImage("Mystery Product (Red)")).toBeNull();
+  it("returns null for unknown skus", () => {
+    expect(itemImage("mystery:red")).toBeNull();
   });
 });
 
