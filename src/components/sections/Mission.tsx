@@ -34,8 +34,8 @@ export default function Mission() {
               a cleaner, healthier planet.
             </p>
             <div>
-              <Button href="#support" variant="white" className="min-h-[48px]">
-                Learn More
+              <Button href="#bikes" variant="white" className="min-h-[48px]">
+                Explore the bikes
               </Button>
             </div>
           </div>

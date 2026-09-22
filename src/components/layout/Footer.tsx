@@ -3,96 +3,6 @@ import Link from "next/link";
 import { navLinks } from "@/lib/nav";
 import Reveal from "@/components/ui/Reveal";
 
-function InstagramIcon({ size = 18 }: { size?: number }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-      <circle cx="12" cy="12" r="5" />
-      <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-
-function FacebookIcon({ size = 18 }: { size?: number }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-    </svg>
-  );
-}
-
-function YoutubeIcon({ size = 18 }: { size?: number }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.13C5.12 19.56 12 19.56 12 19.56s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.43z" />
-      <polygon
-        points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"
-        fill="currentColor"
-        stroke="none"
-      />
-    </svg>
-  );
-}
-
-function TikTokIcon({ size = 18 }: { size?: number }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
-    </svg>
-  );
-}
-
-const socials = [
-  {
-    icon: InstagramIcon,
-    href: "https://www.instagram.com/",
-    label: "Instagram",
-  },
-  { icon: FacebookIcon, href: "https://www.facebook.com/", label: "Facebook" },
-  { icon: YoutubeIcon, href: "https://www.youtube.com/", label: "YouTube" },
-  { icon: TikTokIcon, href: "https://www.tiktok.com/", label: "TikTok" },
-];
-
 function MountainSilhouette() {
   return (
     <svg
@@ -185,21 +95,6 @@ export default function Footer() {
                 </Link>
               ))}
             </nav>
-
-            <div className="order-2 flex items-center gap-5 md:order-3">
-              {socials.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`${social.label} (opens in new tab)`}
-                  className="flex h-11 w-11 items-center justify-center text-white/70 transition-colors hover:text-white"
-                >
-                  <social.icon size={17} />
-                </a>
-              ))}
-            </div>
           </div>
         </div>
       </div>

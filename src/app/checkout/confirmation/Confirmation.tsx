@@ -68,7 +68,7 @@ export default function Confirmation() {
           <span className="text-[#1C1C1A]/70">Total</span>
           <span className="font-bold text-[#1C1C1A]">{formatEuro(order.total)}</span>
         </div>
-        <p className="mt-3 text-[12.5px] text-[#1C1C1A]/60">
+        <p className="mt-3 text-[12.5px] text-[#1C1C1A]/65">
           Placed {new Date(order.placedAt).toLocaleString()}
         </p>
       </div>

@@ -125,7 +125,7 @@ export default function CheckoutForm() {
                     ? "bg-[#2F5D3A] text-white"
                     : step.state === "done"
                       ? "bg-[#2F5D3A]/12 text-[#2F5D3A]"
-                      : "bg-[#1C1C1A]/6 text-[#1C1C1A]/50"
+                      : "bg-[#1C1C1A]/6 text-[#1C1C1A]/65"
                 }`}
               >
                 {step.state === "done" && (
@@ -158,7 +158,7 @@ export default function CheckoutForm() {
                   />
                 ))}
             </div>
-            <p className="mt-3 text-[12.5px] leading-relaxed text-[#1C1C1A]/55">
+            <p className="mt-3 text-[12.5px] leading-relaxed text-[#1C1C1A]/65">
               We use email for order updates. In this demo nothing is sent or stored
               on a server.
             </p>
@@ -190,7 +190,7 @@ export default function CheckoutForm() {
                 className="mb-1.5 block text-[13px] font-semibold text-[#1C1C1A]"
               >
                 Delivery notes{" "}
-                <span className="font-normal text-[#1C1C1A]/50">(optional)</span>
+                <span className="font-normal text-[#1C1C1A]/65">(optional)</span>
               </label>
               <textarea
                 id="checkout-notes"
@@ -200,7 +200,7 @@ export default function CheckoutForm() {
                 placeholder="Door code, safe place, landmark…"
                 value={form.notes}
                 onChange={(e) => setField("notes", e.target.value)}
-                className="min-h-[88px] w-full rounded-[8px] border border-[#1C1C1A]/20 bg-white px-4 py-3 text-[15px] text-[#1C1C1A] transition-colors outline-none placeholder:text-[#1C1C1A]/35 focus:border-[#2F5D3A]"
+                className="min-h-[88px] w-full rounded-[8px] border border-[#1C1C1A]/20 bg-white px-4 py-3 text-[15px] text-[#1C1C1A] transition-colors outline-none placeholder:text-[#1C1C1A]/65 focus:border-[#2F5D3A]"
               />
             </div>
           </SectionCard>

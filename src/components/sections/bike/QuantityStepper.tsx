@@ -24,7 +24,7 @@ export default function QuantityStepper({ value, onChange }: QuantityStepperProp
           type="button"
           aria-label="Decrease quantity"
           onClick={() => onChange(Math.max(1, value - 1))}
-          className="flex h-12 w-12 items-center justify-center text-[#1C1C1A]/60 transition-colors hover:text-[#1C1C1A]"
+          className="flex h-12 w-12 items-center justify-center text-[#1C1C1A]/65 transition-colors hover:text-[#1C1C1A]"
         >
           <Minus size={16} strokeWidth={1.8} aria-hidden />
         </button>
@@ -38,7 +38,7 @@ export default function QuantityStepper({ value, onChange }: QuantityStepperProp
           type="button"
           aria-label="Increase quantity"
           onClick={() => onChange(Math.min(MAX_QTY, value + 1))}
-          className="flex h-12 w-12 items-center justify-center text-[#1C1C1A]/60 transition-colors hover:text-[#1C1C1A]"
+          className="flex h-12 w-12 items-center justify-center text-[#1C1C1A]/65 transition-colors hover:text-[#1C1C1A]"
         >
           <Plus size={16} strokeWidth={1.8} aria-hidden />
         </button>
