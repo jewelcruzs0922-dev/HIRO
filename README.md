@@ -7,6 +7,18 @@ A production-style landing + **simulated checkout** for a fictional premium e-bi
 
 ---
 
+## Live demo
+
+**Not deployed yet.** Deploy in one command from the repo root:
+
+```bash
+npx vercel
+```
+
+Then set `NEXT_PUBLIC_SITE_URL` to your deployment URL (see `.env.example`) and replace this line with the live link.
+
+---
+
 ## Run locally
 
 ```bash
@@ -37,13 +49,13 @@ NEXT_PUBLIC_SITE_URL=https://your-deployment-url.vercel.app
 | Motion    | Framer Motion                            |
 | Icons     | lucide-react (+ inline SVGs for socials) |
 | Images    | `next/image` + pre-optimized WebP assets |
-| Tests     | Playwright + axe-core                    |
+| Tests     | Vitest · Playwright · axe-core           |
 
 ---
 
 ## Features
 
-- **Overlay header** with scroll state, scroll-spy active nav, mobile full-screen menu (focus trap + Escape + body scroll lock)
+- **Overlay header** with scroll state, scroll-spy active nav (`aria-current`), mobile full-screen menu (focus trap + Escape + body scroll lock)
 - **Hero** with preloaded LCP image and staged entrance motion
 - **Benefits** grid (4 → 2 columns) — server-rendered with client `Reveal` wrapper
 - **Featured bike configurator**
@@ -55,7 +67,8 @@ NEXT_PUBLIC_SITE_URL=https://your-deployment-url.vercel.app
   - `/checkout/confirmation` — order id, lines, total (sessionStorage only)
   - Simulated payment — no card data, no network writes
 - **Mission** split section
-- **Footer** with mountain silhouette, nav, contact email, social links
+- **Footer** with mountain silhouette, nav, contact email
+- **Tests:** 25 unit (Vitest) + 14 e2e (Playwright, desktop + mobile) with axe WCAG A/AA in CI — including the populated checkout and confirmation
 - **A11y:** skip link, landmarks, `aria-*` on controls, focus-visible styles, reduced-motion support
 - **SEO:** metadata, canonical URL, Open Graph / Twitter cards, JSON-LD, `robots.txt`, `sitemap.xml`
 - **Responsive:** mobile / tablet / desktop breakpoints
@@ -122,11 +135,14 @@ src/
     nav.ts                   # shared nav links
     site.ts                  # canonical site URL
     constants.ts
+    cart.test.ts             # vitest — cart math, clamping, storage parsing
+    checkout.test.ts         # vitest — validation, line images, delivery dates
 e2e/
   checkout.spec.ts           # full purchase flow + edge cases
   a11y.spec.ts               # axe WCAG A/AA on key routes
-.github/workflows/ci.yml    # typecheck, lint, format, build, e2e
-playwright.config.ts
+.github/workflows/ci.yml    # typecheck, lint, format, unit, build, e2e
+playwright.config.ts         # desktop + mobile (Pixel 7) projects
+vitest.config.mts
 scripts/
   optimize-images.mjs
 public/
@@ -169,7 +185,9 @@ npm run lint:fix        # ESLint --fix
 npm run typecheck       # TypeScript (noEmit)
 npm run format          # Prettier write
 npm run format:check    # Prettier check
-npm run test:e2e        # Playwright (uses dev server locally; CI runs against `npm run start`)
+npm run test            # Vitest unit tests (lib logic)
+npm run test:watch      # Vitest watch mode
+npm run test:e2e        # Playwright, desktop + mobile (uses dev server locally; CI runs against `npm run start`)
 npm run optimize-images # PNG → WebP in public/
 ```
 
@@ -198,20 +216,24 @@ Scores vary by a point run-to-run on local hardware; re-measure before publishin
 
 | Raw    | Gzip   | Files |
 | ------ | ------ | ----- |
-| ~773KB | ~241KB | 17    |
+| ~813KB | ~252KB | 17    |
 
 Largest first-load chunk ≈ **224KB raw** (shared framework/vendor).
 
 ### Accessibility (axe-core in CI)
 
-- **0 violations** (WCAG 2.0/2.1 A + AA) on `/`, `/checkout`, `/checkout/confirmation`
+- **0 violations** (WCAG 2.0/2.1 A + AA) on `/`, `/checkout` (empty **and** populated), `/checkout/confirmation` (fallback **and** placed order)
 - Enforced by `e2e/a11y.spec.ts` on every CI run
 
 ### Tests
 
 ```bash
+npm run test
+# 25 passed — cart math/parsing, checkout validation, line images, delivery dates
+
 npm run test:e2e
-# 6 passed — full order flow, empty-cart guard, confirmation fallback, 3× axe
+# 14 passed — full order flow on desktop + mobile, guards, 4× axe per viewport
+# (home, empty checkout, fallback confirmation, populated checkout + confirmation)
 ```
 
 ---
