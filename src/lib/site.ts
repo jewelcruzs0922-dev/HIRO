@@ -1,2 +1,3 @@
-export const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiro-ebikes.vercel.app";
+const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/, "");
+
+export const siteUrl = configured || "https://hiro-azurite2.vercel.app";
