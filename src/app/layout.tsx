@@ -3,6 +3,7 @@ import { Geist } from "next/font/google";
 import { LazyMotion, domAnimation, MotionConfig } from "framer-motion";
 import "./globals.css";
 import { CartProvider, CartDrawer, CartToast } from "@/components/cart";
+import ScrollToTopOnNavigate from "@/components/layout/ScrollToTopOnNavigate";
 import { siteUrl } from "@/lib/site";
 import { featuredBikes } from "@/lib/bikes";
 
@@ -113,6 +114,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <LazyMotion features={domAnimation}>
           <MotionConfig reducedMotion="user">
             <CartProvider>
+              <ScrollToTopOnNavigate />
               {children}
               <CartDrawer />
               <CartToast />

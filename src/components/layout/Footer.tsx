@@ -1,6 +1,8 @@
+"use client";
+
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { navLinks } from "@/lib/nav";
+import { navLinks, clickTopIfSamePage } from "@/lib/nav";
 import Reveal from "@/components/ui/Reveal";
 
 function MountainSilhouette() {
@@ -30,7 +32,7 @@ function MountainSilhouette() {
 
 export default function Footer() {
   return (
-    <footer id="support" className="bg-ink relative overflow-hidden">
+    <footer className="bg-ink relative overflow-hidden">
       <MountainSilhouette />
 
       <div className="relative z-10 mx-auto max-w-[1280px] px-5 sm:px-6 md:px-10">
@@ -90,6 +92,7 @@ export default function Footer() {
                   key={link.label}
                   href={link.href}
                   className="inline-flex min-h-[44px] items-center text-[12.5px] text-white/70 transition-colors hover:text-white md:text-[13px]"
+                  onClick={(e) => clickTopIfSamePage(e, link.href)}
                 >
                   {link.label}
                 </Link>

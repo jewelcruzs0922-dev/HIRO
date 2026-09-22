@@ -54,6 +54,9 @@ const nextConfig: NextConfig = {
       algorithm: "sha256",
     },
   },
+  images: {
+    qualities: [75, 85],
+  },
   async headers() {
     return [
       {

@@ -4,9 +4,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import { ShoppingBag, Menu, X } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useCart } from "@/components/cart";
-import { navLinks } from "@/lib/nav";
+import { navLinks, clickTopIfSamePage } from "@/lib/nav";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
@@ -21,6 +21,7 @@ export default function Header() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const { count, isOpen: cartOpen, openCart, closeCart } = useCart();
   const router = useRouter();
+  const pathname = usePathname();
   const menuRef = useRef<HTMLElement | null>(null);
   const menuButtonRef = useRef<HTMLButtonElement | null>(null);
   const cartButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -106,13 +107,18 @@ export default function Header() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
         className={`fixed top-0 right-0 left-0 z-50 transition-colors duration-300 ${
-          scrolled || menuOpen
+          scrolled || menuOpen || pathname !== "/"
             ? "bg-ink/92 backdrop-blur-sm"
-            : "bg-ink/80 backdrop-blur-sm"
+            : "bg-transparent"
         }`}
       >
         <div className="mx-auto flex h-[64px] max-w-[1280px] items-center justify-between px-5 sm:px-6 md:h-[72px] md:px-10">
-          <Link href="/" className="relative z-10" aria-label="HIRO home">
+          <Link
+            href="/"
+            className="relative z-10"
+            aria-label="HIRO home"
+            onClick={(e) => clickTopIfSamePage(e, "/")}
+          >
             <span className="text-[26px] font-extrabold tracking-[0.18em] text-white md:text-[28px]">
               HIRO
             </span>
@@ -127,6 +133,7 @@ export default function Header() {
                   href={link.href}
                   aria-current={isActive ? "location" : undefined}
                   className="group inline-flex min-h-[44px] items-center text-[13.5px] font-medium tracking-[0.01em]"
+                  onClick={(e) => clickTopIfSamePage(e, link.href)}
                 >
                   <span
                     className={`relative pb-0.5 transition-colors ${
@@ -229,6 +236,13 @@ export default function Header() {
                     onClick={(e) => {
                       e.preventDefault();
                       closeMenu();
+                      if (
+                        !link.href.includes("#") &&
+                        window.location.pathname === link.href
+                      ) {
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                        return;
+                      }
                       router.push(link.href);
                     }}
                   >

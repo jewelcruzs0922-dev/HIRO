@@ -26,8 +26,6 @@ import {
   subscribeCart,
 } from "@/lib/cartStore";
 
-export type { CartItem };
-
 interface CartContextValue {
   count: number;
   items: CartItem[];

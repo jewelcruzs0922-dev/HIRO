@@ -1,10 +1,44 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { m } from "framer-motion";
 import Image from "next/image";
 import Button from "@/components/ui/Button";
 
+const SLIDES = [
+  {
+    src: "/hiro-hero.webp",
+    alt: "Rider on a HIRO electric bike overlooking a mountain landscape at golden hour",
+    position: "object-[68%_center] md:object-center",
+  },
+  {
+    src: "/hiro-hero-golden.webp",
+    alt: "HIRO electric bike on a mountain trail at golden hour",
+    position: "object-[60%_center] md:object-center",
+  },
+  {
+    src: "/hiro-hero-lake.webp",
+    alt: "Rider sitting on a HIRO e-bike by the lake at sunset",
+    position: "object-[58%_center] md:object-center",
+  },
+] as const;
+
+const SLIDE_INTERVAL_MS = 4000;
+const SLIDE_FADE_MS = 1000;
+
 export default function Hero() {
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+    const timer = setInterval(() => {
+      setActiveSlide((i) => (i + 1) % SLIDES.length);
+    }, SLIDE_INTERVAL_MS);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <section
       id="home"
@@ -12,14 +46,23 @@ export default function Hero() {
       aria-label="Hero"
     >
       <div className="absolute inset-0">
-        <Image
-          src="/hiro-hero.webp"
-          alt="Rider on a HIRO electric bike overlooking a mountain landscape at golden hour"
-          fill
-          preload
-          sizes="100vw"
-          className="object-cover object-[68%_center] md:object-center"
-        />
+        {SLIDES.map((slide, i) => (
+          <Image
+            key={slide.src}
+            src={slide.src}
+            alt={slide.alt}
+            fill
+            preload={i === 0}
+            loading={i === 0 ? "eager" : "lazy"}
+            quality={85}
+            sizes="100vw"
+            aria-hidden={i !== activeSlide}
+            className={`object-cover ${slide.position} transition-opacity ease-in-out ${
+              i === activeSlide ? "opacity-100" : "opacity-0"
+            }`}
+            style={{ transitionDuration: `${SLIDE_FADE_MS}ms` }}
+          />
+        ))}
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/10 md:from-black/55 md:via-black/25 md:to-transparent" />
         <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/35 to-transparent md:hidden" />
       </div>

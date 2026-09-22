@@ -3,6 +3,7 @@ import AxeBuilder from "@axe-core/playwright";
 
 const pages = [
   { path: "/", name: "home" },
+  { path: "/support", name: "support" },
   { path: "/checkout", name: "checkout (empty)" },
   { path: "/checkout/confirmation", name: "confirmation (fallback)" },
 ];

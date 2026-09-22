@@ -82,7 +82,7 @@ export default function BikeOverview({
           {bike.tagline}
         </p>
         <div className="mb-7 min-h-[158px] max-w-[400px] sm:mb-8 sm:min-h-[164px]">
-          <p className="text-charcoal/70 text-[14.5px] leading-[1.7] sm:text-[15.5px] sm:leading-[1.75]">
+          <p className="text-charcoal/75 text-[16.5px] leading-[1.7] sm:text-[17.5px] sm:leading-[1.75]">
             {bike.description}
           </p>
         </div>

@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from "react";
 
-export interface OrderLine {
+interface OrderLine {
   label: string;
   qty: number;
   unitPrice: number;
@@ -17,9 +17,16 @@ export interface PlacedOrder {
 
 const STORAGE_KEY = "hiro-last-order";
 
+const listeners = new Set<() => void>();
+
+function emitOrderChange() {
+  for (const listener of listeners) listener();
+}
+
 export function saveOrder(order: PlacedOrder): boolean {
   try {
     window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(order));
+    emitOrderChange();
     return true;
   } catch {
     return false;
@@ -35,8 +42,11 @@ export function createOrderId(): string {
   return `HIRO-${stamp}-${rand}`;
 }
 
-function subscribe() {
-  return () => {};
+function subscribe(listener: () => void): () => void {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
 }
 
 function getOrderSnapshot(): string | null {
