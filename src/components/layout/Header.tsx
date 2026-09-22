@@ -10,9 +10,15 @@ import { navLinks } from "@/lib/nav";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
+function hashOf(href: string): string | null {
+  const i = href.indexOf("#");
+  return i === -1 ? null : href.slice(i + 1);
+}
+
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const { count, isOpen: cartOpen, openCart, closeCart } = useCart();
   const router = useRouter();
   const menuRef = useRef<HTMLElement | null>(null);
@@ -26,6 +32,38 @@ export default function Header() {
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const ids = navLinks
+      .map((l) => hashOf(l.href))
+      .filter((id): id is string => id !== null);
+    const ratios = new Map<string, number>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          ratios.set(entry.target.id, entry.intersectionRatio);
+        }
+        let bestId: string | null = null;
+        let bestRatio = 0;
+        for (const [id, ratio] of ratios) {
+          if (ratio > bestRatio) {
+            bestRatio = ratio;
+            bestId = id;
+          }
+        }
+        if (bestId !== null && bestRatio > 0) setActiveId(bestId);
+      },
+      {
+        rootMargin: "-72px 0px -45% 0px",
+        threshold: [0, 0.05, 0.15, 0.3, 0.5, 0.75, 1],
+      },
+    );
+    for (const id of ids) {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    }
+    return () => observer.disconnect();
   }, []);
 
   useBodyScrollLock(menuOpen);
@@ -81,15 +119,33 @@ export default function Header() {
           </Link>
 
           <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                className="inline-flex min-h-[44px] items-center pb-0.5 text-[13.5px] font-medium tracking-[0.01em] text-white/75 transition-colors hover:text-white"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = hashOf(link.href) === activeId;
+              return (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  aria-current={isActive ? "location" : undefined}
+                  className="group inline-flex min-h-[44px] items-center text-[13.5px] font-medium tracking-[0.01em]"
+                >
+                  <span
+                    className={`relative pb-0.5 transition-colors ${
+                      isActive
+                        ? "text-white"
+                        : "text-white/75 group-hover:text-white"
+                    }`}
+                  >
+                    {link.label}
+                    <span
+                      aria-hidden
+                      className={`absolute -bottom-1 left-0 h-px w-full origin-left bg-white transition-transform duration-200 ${
+                        isActive ? "scale-x-100" : "scale-x-0"
+                      }`}
+                    />
+                  </span>
+                </Link>
+              );
+            })}
           </nav>
 
           <div className="flex items-center gap-3 sm:gap-5">
@@ -157,23 +213,29 @@ export default function Header() {
               >
                 <X size={24} aria-hidden />
               </button>
-              {navLinks.map((link, i) => (
-                <m.a
-                  key={link.label}
-                  href={link.href}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.05 + i * 0.06, duration: 0.35 }}
-                  className="min-h-[44px] text-[20px] font-medium text-white/65 sm:text-[22px]"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    closeMenu();
-                    router.push(link.href);
-                  }}
-                >
-                  {link.label}
-                </m.a>
-              ))}
+              {navLinks.map((link, i) => {
+                const isActive = hashOf(link.href) === activeId;
+                return (
+                  <m.a
+                    key={link.label}
+                    href={link.href}
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.05 + i * 0.06, duration: 0.35 }}
+                    aria-current={isActive ? "location" : undefined}
+                    className={`min-h-[44px] text-[20px] font-medium transition-colors sm:text-[22px] ${
+                      isActive ? "text-white" : "text-white/65"
+                    }`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      closeMenu();
+                      router.push(link.href);
+                    }}
+                  >
+                    {link.label}
+                  </m.a>
+                );
+              })}
             </nav>
           </m.div>
         )}
