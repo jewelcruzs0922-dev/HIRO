@@ -68,7 +68,7 @@ NEXT_PUBLIC_SITE_URL=https://your-deployment-url.vercel.app
   - Simulated payment — no card data, no network writes
 - **Mission** split section
 - **Footer** with mountain silhouette, nav, contact email
-- **Tests:** 35 unit (Vitest) + 14 e2e (Playwright, desktop + mobile) with axe WCAG A/AA in CI — including the populated checkout and confirmation
+- **Tests:** 35 unit (Vitest) + 16 e2e (Playwright, desktop + mobile) with axe WCAG A/AA in CI — including the populated checkout and confirmation
 - **A11y:** skip link, landmarks, `aria-*` on controls, focus-visible styles, reduced-motion support
 - **SEO:** metadata, canonical URL, Open Graph / Twitter cards, JSON-LD, `robots.txt`, `sitemap.xml`
 - **Responsive:** mobile / tablet / desktop breakpoints
@@ -141,6 +141,7 @@ src/
 e2e/
   checkout.spec.ts           # full purchase flow + edge cases
   a11y.spec.ts               # axe WCAG A/AA on key routes
+  nav.spec.ts                # scroll-spy aria-current + mobile menu keyboard
 .github/workflows/ci.yml    # typecheck, lint, format, unit, build, e2e
 playwright.config.ts         # desktop + mobile (Pixel 7) projects
 vitest.config.mts
@@ -233,8 +234,9 @@ npm run test
 # 35 passed — cart math/parsing, checkout validation, order storage guard, delivery dates
 
 npm run test:e2e
-# 14 passed — full order flow on desktop + mobile, guards, 4× axe per viewport
-# (home, empty checkout, fallback confirmation, populated checkout + confirmation)
+# 16 passed — full order flow on desktop + mobile, guards, scroll-spy,
+# mobile-menu keyboard flow, 4× axe per viewport (home, empty checkout,
+# fallback confirmation, populated checkout + confirmation)
 ```
 
 ---
@@ -257,6 +259,7 @@ npm run test:e2e
 - Cart drawer close control lives **inside** the focus trap
 - Focus restored to triggers after dialog close / bike change / expand
 - Global `:focus-visible` ring (light variant on dark surfaces)
+- Non-text contrast (WCAG 1.4.11): input, stepper, swatch, and cart-quantity borders meet 3:1 against their surfaces
 - `prefers-reduced-motion` respected via CSS + `MotionConfig reducedMotion="user"`
 - WCAG AA contrast on body text and Mission panel; verified by axe in CI
 
