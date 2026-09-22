@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { MotionConfig } from "framer-motion";
 import "./globals.css";
 import { CartProvider } from "@/components/CartProvider";
 
@@ -21,6 +22,9 @@ export const metadata: Metadata = {
   title: "HIRO — A Cleaner Tomorrow, Rides Today",
   description:
     "Premium electric bikes engineered for a cleaner planet. Explore the HIRO Trail, City, and Fold — zero emissions, modern design, ride further.",
+  alternates: {
+    canonical: "/",
+  },
   keywords: [
     "e-bike",
     "electric bike",
@@ -73,7 +77,9 @@ export default function RootLayout({
         >
           Skip to content
         </a>
-        <CartProvider>{children}</CartProvider>
+        <CartProvider>
+          <MotionConfig reducedMotion="user">{children}</MotionConfig>
+        </CartProvider>
       </body>
     </html>
   );

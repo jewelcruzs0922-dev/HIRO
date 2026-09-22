@@ -20,7 +20,7 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeId, setActiveId] = useState("home");
-  const { count, isOpen: cartOpen, openCart } = useCart();
+  const { count, isOpen: cartOpen, openCart, closeCart } = useCart();
   const menuRef = useRef<HTMLElement | null>(null);
   const menuButtonRef = useRef<HTMLButtonElement | null>(null);
   const cartButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -76,6 +76,16 @@ export default function Header() {
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
 
+  const handleOpenCart = useCallback(() => {
+    setMenuOpen(false);
+    openCart();
+  }, [openCart]);
+
+  const toggleMenu = useCallback(() => {
+    if (!menuOpen) closeCart();
+    setMenuOpen(!menuOpen);
+  }, [menuOpen, closeCart]);
+
   useEffect(() => {
     if (!menuOpen) return;
 
@@ -121,11 +131,11 @@ export default function Header() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
-          scrolled || menuOpen
-            ? "bg-[#1A1A1A]/92 backdrop-blur-sm"
-            : "bg-transparent"
-        }`}
+          className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
+            scrolled || menuOpen
+              ? "bg-[#1A1A1A]/92 backdrop-blur-sm"
+              : "bg-[#1A1A1A]/80 backdrop-blur-sm"
+          }`}
       >
         <div className="mx-auto flex h-[64px] max-w-[1280px] items-center justify-between px-5 sm:px-6 md:h-[72px] md:px-10">
           <Link href="/" className="relative z-10" aria-label="HIRO home">
@@ -160,7 +170,7 @@ export default function Header() {
             <button
               type="button"
               ref={cartButtonRef}
-              onClick={openCart}
+              onClick={handleOpenCart}
               aria-label={
                 count > 0
                   ? `Open shopping cart, ${count} item${count === 1 ? "" : "s"}`
@@ -184,7 +194,7 @@ export default function Header() {
               aria-label={menuOpen ? "Close menu" : "Open menu"}
               aria-expanded={menuOpen}
               className="relative z-10 -mr-2 flex h-11 w-11 items-center justify-center text-white lg:hidden"
-              onClick={() => setMenuOpen((v) => !v)}
+              onClick={toggleMenu}
             >
               {menuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>

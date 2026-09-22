@@ -92,7 +92,7 @@ public/
 | Forest (accent) | `#2F5D3A` |
 | CTA green | `#4A7858` (hover `#3F684C`) |
 | Featured bg | `#F0EDE8` |
-| Mission panel | `#6B7E6E` |
+| Mission panel | `#4F6352` |
 
 Type: **Geist Sans** via `next/font`.
 
@@ -122,8 +122,8 @@ npm run lint     # ESLint
 
 - Skip-to-content link
 - Keyboard-operable bike controls, color, and quantity
-- Mobile menu: focus moved into menu, Tab trapped, Escape closes
-- Global `:focus-visible` ring
+- Mobile menu: focus moved into menu, Tab trapped, Escape closes; mutually exclusive with cart drawer
+- Global `:focus-visible` ring (light variant on dark surfaces)
 - `prefers-reduced-motion` respected in CSS
 
 ---

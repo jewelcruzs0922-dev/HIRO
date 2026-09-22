@@ -2,7 +2,11 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-[#F0EDE8] px-5 text-center">
+    <main
+      id="main"
+      tabIndex={-1}
+      className="flex min-h-screen flex-col items-center justify-center bg-[#F0EDE8] px-5 text-center"
+    >
       <span className="mb-4 text-[13px] font-bold uppercase tracking-[0.2em] text-[#2F5D3A]">
         404
       </span>
