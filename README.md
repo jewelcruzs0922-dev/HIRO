@@ -202,23 +202,24 @@ npm run optimize-images # PNG → WebP in public/
 
 ## Evidence (measured)
 
-_Local production server (`npm run build && npm run start`), Lighthouse v12 mobile emulation._
+_Production URL (`https://hiro-azurite2.vercel.app`), Lighthouse 13.5.0 mobile emulation, median of 3 runs (95 / 97 / 92)._
 
 ### Lighthouse
 
 | Performance | Accessibility | Best practices | SEO     |
 | ----------- | ------------- | -------------- | ------- |
-| **92**      | **100**       | **100**        | **100** |
+| **95**      | **100**       | **100**        | **100** |
 
 | Metric                         | Value   |
 | ------------------------------ | ------- |
-| First Contentful Paint (FCP)   | ~0.77 s |
-| Largest Contentful Paint (LCP) | ~3.2 s  |
-| Total Blocking Time (TBT)      | ~0.10 s |
+| First Contentful Paint (FCP)   | ~0.95 s |
+| Largest Contentful Paint (LCP) | ~2.7 s  |
+| Total Blocking Time (TBT)      | ~0.11 s |
 | Cumulative Layout Shift (CLS)  | **0**   |
-| Speed Index                    | ~1.0 s  |
+| Speed Index                    | ~2.5 s  |
+| Time to First Byte (TTFB)      | ~40 ms  |
 
-LCP is the preloaded hero image; under Lighthouse's simulated mobile network (~1.6 Mbps) that image transfer dominates the score — the audit reports **no remaining opportunities > 50 ms**. Scores vary a point or two run-to-run on local hardware; re-measure before publishing claims.
+LCP is the preloaded hero image; under Lighthouse's simulated mobile network (~1.6 Mbps) that image transfer dominates the score — the only flagged audit opportunity is render-blocking resources (~60–150 ms estimated savings). The performance score varies a couple of points run-to-run (95 / 97 / 92); the median is reported above.
 
 ### Bundle (production `.next/static`, JS + CSS)
 
