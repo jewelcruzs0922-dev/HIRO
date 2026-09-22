@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { m, useInView, AnimatePresence } from "framer-motion";
 import { Minus, Plus, X, ArrowRight, ArrowLeft } from "lucide-react";
 import Button from "./Button";
 import BikeSpecs, { type SpecItem } from "./BikeSpecs";
 import { useCart } from "./CartProvider";
+import { MAX_QTY } from "@/lib/constants";
 
 interface BikeColor {
   id: string;
@@ -16,7 +17,7 @@ interface BikeColor {
   widthPct: number;
 }
 
-interface FeaturedBike {
+interface Bike {
   id: string;
   name: string;
   tagline: string;
@@ -27,7 +28,7 @@ interface FeaturedBike {
   specs: SpecItem[];
 }
 
-const featuredBikes: FeaturedBike[] = [
+const featuredBikes: Bike[] = [
   {
     id: "trail",
     name: "HIRO Trail",
@@ -151,26 +152,68 @@ export default function FeaturedBike() {
   const [bikeIndex, setBikeIndex] = useState(0);
   const [colorIndex, setColorIndex] = useState(0);
   const [qty, setQty] = useState(1);
+  const [announcement, setAnnouncement] = useState("");
   const { addItem } = useCart();
+
+  const detailsButtonRef = useRef<HTMLButtonElement | null>(null);
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const nextButtonRef = useRef<HTMLButtonElement | null>(null);
+  const userInteracted = useRef(false);
+  const prevBikeIndex = useRef(bikeIndex);
 
   const bike = featuredBikes[bikeIndex];
   const activeColor = bike.colors[colorIndex] ?? bike.colors[0];
 
+  useEffect(() => {
+    if (!userInteracted.current) return;
+    if (expanded) {
+      closeButtonRef.current?.focus();
+    } else {
+      detailsButtonRef.current?.focus();
+    }
+  }, [expanded]);
+
+  useEffect(() => {
+    if (prevBikeIndex.current === bikeIndex) return;
+    prevBikeIndex.current = bikeIndex;
+    if (!userInteracted.current || expanded) return;
+    nextButtonRef.current?.focus();
+  }, [bikeIndex, expanded]);
+
   const goNextBike = () => {
+    userInteracted.current = true;
+    const nextIndex = (bikeIndex + 1) % featuredBikes.length;
+    const next = featuredBikes[nextIndex];
     setExpanded(false);
-    setBikeIndex((i) => (i + 1) % featuredBikes.length);
+    setBikeIndex(nextIndex);
     setColorIndex(0);
     setQty(1);
+    setAnnouncement(`${next.name}, ${next.price}`);
   };
 
   const goPrevBike = () => {
+    userInteracted.current = true;
+    const prevIndex =
+      (bikeIndex - 1 + featuredBikes.length) % featuredBikes.length;
+    const prev = featuredBikes[prevIndex];
     setExpanded(false);
-    setBikeIndex(
-      (i) => (i - 1 + featuredBikes.length) % featuredBikes.length
-    );
+    setBikeIndex(prevIndex);
     setColorIndex(0);
     setQty(1);
+    setAnnouncement(`${prev.name}, ${prev.price}`);
   };
+
+  const openDetails = () => {
+    userInteracted.current = true;
+    setExpanded(true);
+  };
+
+  const closeDetails = () => {
+    userInteracted.current = true;
+    setExpanded(false);
+  };
+
+  const detailsPanelId = "bike-details-panel";
 
   return (
     <section
@@ -178,10 +221,13 @@ export default function FeaturedBike() {
       className="overflow-x-hidden bg-[#F0EDE8] py-14 sm:py-16 md:py-20 lg:py-24"
       aria-label="Featured bike"
     >
+      <p aria-live="polite" className="sr-only">
+        {announcement}
+      </p>
       <div ref={ref} className="mx-auto max-w-[1280px] px-5 sm:px-6 md:px-10">
         <AnimatePresence mode="wait" initial={false}>
           {!expanded ? (
-            <motion.div
+            <m.div
               key={`default-${bike.id}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -189,7 +235,7 @@ export default function FeaturedBike() {
               transition={{ duration: 0.35 }}
               className="grid grid-cols-1 items-center gap-10 sm:gap-12 md:grid-cols-2 md:gap-x-10 md:gap-y-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.45fr)_auto] lg:gap-10 xl:gap-14"
             >
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, x: -28 }}
                 animate={isInView ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.65, ease: [0.25, 0.1, 0.25, 1] }}
@@ -218,11 +264,13 @@ export default function FeaturedBike() {
                       <ArrowLeft
                         size={18}
                         strokeWidth={1.8}
+                        aria-hidden
                         className="transition-transform duration-200 group-hover:-translate-x-0.5"
                       />
                     </button>
                     <button
                       type="button"
+                      ref={nextButtonRef}
                       onClick={goNextBike}
                       aria-label={`View next bike: ${
                         featuredBikes[(bikeIndex + 1) % featuredBikes.length]
@@ -233,6 +281,7 @@ export default function FeaturedBike() {
                       <ArrowRight
                         size={18}
                         strokeWidth={1.8}
+                        aria-hidden
                         className="transition-transform duration-200 group-hover:translate-x-0.5"
                       />
                     </button>
@@ -248,14 +297,17 @@ export default function FeaturedBike() {
                   </p>
                 </div>
                 <Button
-                  onClick={() => setExpanded(true)}
+                  buttonRef={detailsButtonRef}
+                  aria-expanded={false}
+                  aria-controls={detailsPanelId}
+                  onClick={openDetails}
                   className="w-full sm:w-auto"
                 >
                   View Details
                 </Button>
-              </motion.div>
+              </m.div>
 
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, y: 28 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{
@@ -265,7 +317,7 @@ export default function FeaturedBike() {
                 }}
                 className="group relative flex aspect-[4/3] w-full items-center justify-center overflow-visible"
               >
-                <motion.div
+                <m.div
                   key={activeColor.image}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -277,13 +329,13 @@ export default function FeaturedBike() {
                     src={activeColor.image}
                     alt={`${bike.name} electric bike in ${activeColor.name} with fat tires`}
                     fill
-                    sizes="(min-width: 1024px) 45vw, (min-width: 768px) 50vw, 100vw"
+                    sizes="(min-width: 1024px) 60vw, (min-width: 768px) 50vw, 100vw"
                     className="object-contain transition-transform duration-500 group-hover:scale-[1.02]"
                   />
-                </motion.div>
-              </motion.div>
+                </m.div>
+              </m.div>
 
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, x: 28 }}
                 animate={isInView ? { opacity: 1, x: 0 } : {}}
                 transition={{
@@ -294,11 +346,12 @@ export default function FeaturedBike() {
                 className="md:col-span-2 lg:col-span-1 lg:pl-2"
               >
                 <BikeSpecs specs={bike.specs} />
-              </motion.div>
-            </motion.div>
+              </m.div>
+            </m.div>
           ) : (
-            <motion.div
+            <m.div
               key={`expanded-${bike.id}`}
+              id={detailsPanelId}
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -16 }}
@@ -308,17 +361,18 @@ export default function FeaturedBike() {
               <div className="absolute right-0 top-0 z-10 flex gap-2">
                 <button
                   type="button"
-                  onClick={() => setExpanded(false)}
+                  ref={closeButtonRef}
+                  onClick={closeDetails}
                   aria-label="Close details"
                   className="flex h-11 w-11 items-center justify-center rounded-full border border-[#1C1C1A]/15 bg-white text-[#1C1C1A]/60 transition-colors hover:border-[#1C1C1A]/35 hover:text-[#1C1C1A]"
                 >
-                  <X size={18} strokeWidth={1.8} />
+                  <X size={18} strokeWidth={1.8} aria-hidden />
                 </button>
               </div>
 
               <div className="grid grid-cols-1 items-start gap-8 sm:gap-10 md:grid-cols-2 md:gap-x-10 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] lg:gap-14">
                 <div className="flex h-[280px] w-full items-center justify-center overflow-visible sm:h-[360px] md:h-[440px] lg:h-[500px]">
-                  <motion.div
+                  <m.div
                     key={activeColor.image}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -330,10 +384,10 @@ export default function FeaturedBike() {
                       src={activeColor.image}
                       alt={`${bike.name} electric bike in ${activeColor.name}`}
                       fill
-                      sizes="(min-width: 1024px) 50vw, 100vw"
+                      sizes="(min-width: 1024px) 60vw, 100vw"
                       className="object-contain"
                     />
-                  </motion.div>
+                  </m.div>
                 </div>
 
                 <div className="flex flex-col">
@@ -354,13 +408,20 @@ export default function FeaturedBike() {
                   </p>
 
                   <div className="mb-6 sm:mb-7">
-                    <p className="mb-3 text-[13px] font-semibold uppercase tracking-[0.12em] text-[#1C1C1A]/70">
+                    <p
+                      id="color-label"
+                      className="mb-3 text-[13px] font-semibold uppercase tracking-[0.12em] text-[#1C1C1A]/70"
+                    >
                       Color —{" "}
-                       <span className="font-medium normal-case tracking-normal text-[#1C1C1A]/70">
+                      <span className="font-medium normal-case tracking-normal text-[#1C1C1A]/70">
                         {activeColor.name}
                       </span>
                     </p>
-                    <div className="flex items-center gap-3.5">
+                    <div
+                      role="group"
+                      aria-labelledby="color-label"
+                      className="flex items-center gap-3.5"
+                    >
                       {bike.colors.map((c) => (
                         <button
                           key={c.id}
@@ -368,7 +429,9 @@ export default function FeaturedBike() {
                           aria-label={`Select ${c.name}`}
                           aria-pressed={activeColor.id === c.id}
                           onClick={() =>
-                            setColorIndex(bike.colors.findIndex((x) => x.id === c.id))
+                            setColorIndex(
+                              bike.colors.findIndex((x) => x.id === c.id)
+                            )
                           }
                           className="relative flex h-11 w-11 items-center justify-center rounded-full transition-all"
                         >
@@ -386,17 +449,24 @@ export default function FeaturedBike() {
                   </div>
 
                   <div className="mb-7 sm:mb-8">
-                    <p className="mb-3 text-[13px] font-semibold uppercase tracking-[0.12em] text-[#1C1C1A]/70">
+                    <p
+                      id="quantity-label"
+                      className="mb-3 text-[13px] font-semibold uppercase tracking-[0.12em] text-[#1C1C1A]/70"
+                    >
                       Quantity
                     </p>
-                    <div className="inline-flex items-center rounded-lg border border-[#1C1C1A]/15">
+                    <div
+                      role="group"
+                      aria-labelledby="quantity-label"
+                      className="inline-flex items-center rounded-lg border border-[#1C1C1A]/15"
+                    >
                       <button
                         type="button"
                         aria-label="Decrease quantity"
                         onClick={() => setQty((q) => Math.max(1, q - 1))}
                         className="flex h-12 w-12 items-center justify-center text-[#1C1C1A]/60 transition-colors hover:text-[#1C1C1A]"
                       >
-                        <Minus size={16} strokeWidth={1.8} />
+                        <Minus size={16} strokeWidth={1.8} aria-hidden />
                       </button>
                       <span
                         className="w-10 text-center text-[15px] font-semibold text-[#1C1C1A]"
@@ -407,24 +477,28 @@ export default function FeaturedBike() {
                       <button
                         type="button"
                         aria-label="Increase quantity"
-                        onClick={() => setQty((q) => Math.min(9, q + 1))}
+                        onClick={() => setQty((q) => Math.min(MAX_QTY, q + 1))}
                         className="flex h-12 w-12 items-center justify-center text-[#1C1C1A]/60 transition-colors hover:text-[#1C1C1A]"
                       >
-                        <Plus size={16} strokeWidth={1.8} />
+                        <Plus size={16} strokeWidth={1.8} aria-hidden />
                       </button>
                     </div>
                   </div>
 
                   <div className="flex flex-col items-start gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-5">
                     <Button
-                      onClick={() => addItem(qty, `${bike.name} (${activeColor.name})`)}
+                      aria-expanded={true}
+                      aria-controls={detailsPanelId}
+                      onClick={() =>
+                        addItem(qty, `${bike.name} (${activeColor.name})`)
+                      }
                       className="w-full sm:w-auto"
                     >
                       Add to Cart
                     </Button>
                     <button
                       type="button"
-                      onClick={() => setExpanded(false)}
+                      onClick={closeDetails}
                       className="min-h-[44px] text-[14px] font-medium text-[#1C1C1A]/70 underline-offset-4 transition-colors hover:text-[#1C1C1A] hover:underline"
                     >
                       Back to overview
@@ -432,7 +506,7 @@ export default function FeaturedBike() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       </div>

@@ -1,5 +1,3 @@
-"use client";
-
 import { ArrowRight } from "lucide-react";
 
 interface ButtonProps {
@@ -10,6 +8,9 @@ interface ButtonProps {
   onClick?: (e: React.MouseEvent<HTMLElement>) => void;
   type?: "button" | "submit";
   "aria-label"?: string;
+  "aria-expanded"?: boolean;
+  "aria-controls"?: string;
+  buttonRef?: React.Ref<HTMLButtonElement>;
 }
 
 export default function Button({
@@ -20,6 +21,9 @@ export default function Button({
   onClick,
   type = "button",
   "aria-label": ariaLabel,
+  "aria-expanded": ariaExpanded,
+  "aria-controls": ariaControls,
+  buttonRef,
 }: ButtonProps) {
   const base =
     "group inline-flex min-h-[48px] items-center justify-center gap-2.5 rounded-[8px] px-5 py-3 text-[14px] font-medium tracking-[0.01em] transition-all duration-200 sm:px-6";
@@ -37,6 +41,7 @@ export default function Button({
       <ArrowRight
         size={16}
         strokeWidth={1.8}
+        aria-hidden
         className="transition-transform duration-200 group-hover:translate-x-1"
       />
     </>
@@ -55,9 +60,12 @@ export default function Button({
   return (
     <button
       type={type}
+      ref={buttonRef}
       onClick={onClick}
       className={classes}
       aria-label={ariaLabel}
+      aria-expanded={ariaExpanded}
+      aria-controls={ariaControls}
     >
       {content}
     </button>

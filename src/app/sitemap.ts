@@ -1,12 +1,13 @@
 import type { MetadataRoute } from "next";
+import { siteUrl } from "@/lib/site";
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiro-ebikes.vercel.app";
+const lastModified = new Date("2026-09-22");
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: baseUrl,
-      lastModified: new Date(),
+      url: siteUrl,
+      lastModified,
       changeFrequency: "monthly",
       priority: 1,
     },

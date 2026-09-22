@@ -1,14 +1,14 @@
 "use client";
 
+import { m } from "framer-motion";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import Button from "./Button";
 
 export default function Hero() {
   return (
     <section
       id="home"
-      className="relative h-[540px] overflow-hidden sm:h-[600px] md:h-[680px] lg:h-[720px]"
+      className="relative min-h-[540px] overflow-hidden sm:min-h-[600px] md:min-h-[680px] lg:min-h-[720px]"
       aria-label="Hero"
     >
       <div className="absolute inset-0">
@@ -16,7 +16,7 @@ export default function Hero() {
           src="/hiro-hero.webp"
           alt="Rider on a HIRO electric bike overlooking a mountain landscape at golden hour"
           fill
-          priority
+          preload
           sizes="100vw"
           className="object-cover object-[68%_center] md:object-center"
         />
@@ -24,9 +24,9 @@ export default function Hero() {
         <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/35 to-transparent md:hidden" />
       </div>
 
-      <div className="relative z-10 mx-auto flex h-full max-w-[1280px] items-center px-5 pt-16 sm:px-6 md:px-10 md:pt-0">
+      <div className="relative z-10 mx-auto flex min-h-[540px] max-w-[1280px] items-center px-5 pt-16 sm:min-h-[600px] sm:px-6 md:min-h-[680px] md:px-10 md:pt-0 lg:min-h-[720px]">
         <div className="max-w-[540px]">
-          <motion.h1
+          <m.h1
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
@@ -37,9 +37,9 @@ export default function Hero() {
             Tomorrow,
             <br />
             Rides Today.
-          </motion.h1>
+          </m.h1>
 
-          <motion.p
+          <m.p
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.35 }}
@@ -50,9 +50,9 @@ export default function Hero() {
             reliable performance, and a greener future.
             <br className="hidden sm:block" />
             Ride further. Live better.
-          </motion.p>
+          </m.p>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.55 }}
@@ -60,7 +60,7 @@ export default function Hero() {
             <Button href="#bikes" className="min-h-[48px]">
               Explore Our E-Bikes
             </Button>
-          </motion.div>
+          </m.div>
         </div>
       </div>
     </section>

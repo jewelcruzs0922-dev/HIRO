@@ -9,10 +9,12 @@ import {
   useRef,
   useState,
 } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { X } from "lucide-react";
+import { MAX_QTY } from "@/lib/constants";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
-export interface CartItem {
+interface CartItem {
   id: number;
   qty: number;
   label: string;
@@ -50,10 +52,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const existing = prev.find((i) => i.label === label);
       if (existing) {
         return prev.map((i) =>
-          i.label === label ? { ...i, qty: Math.min(99, i.qty + qty) } : i
+          i.label === label
+            ? { ...i, qty: Math.min(MAX_QTY, i.qty + qty) }
+            : i
         );
       }
-      return [...prev, { id: nextId.current++, qty, label }];
+      return [
+        ...prev,
+        { id: nextId.current++, qty: Math.min(MAX_QTY, qty), label },
+      ];
     });
     setToast(`Added ${qty}× ${label} to cart`);
   }, []);
@@ -67,42 +74,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return () => window.clearTimeout(t);
   }, [toast]);
 
+  useFocusTrap(drawerRef, {
+    active: isOpen,
+    onEscape: closeCart,
+    initialFocusRef: closeButtonRef,
+  });
+
   useEffect(() => {
     if (!isOpen) return;
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setIsOpen(false);
-        return;
-      }
-      if (e.key !== "Tab" || !drawerRef.current) return;
-
-      const focusable = drawerRef.current.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled])'
-      );
-      if (focusable.length === 0) return;
-
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      const active = document.activeElement;
-
-      if (e.shiftKey && (active === first || active === drawerRef.current)) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && active === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    };
-
-    window.addEventListener("keydown", onKeyDown);
     document.body.style.overflow = "hidden";
-    const t = window.setTimeout(() => closeButtonRef.current?.focus(), 50);
-
     return () => {
-      window.removeEventListener("keydown", onKeyDown);
       document.body.style.overflow = "";
-      window.clearTimeout(t);
     };
   }, [isOpen]);
 
@@ -118,7 +100,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       <AnimatePresence>
         {isOpen && (
           <>
-            <motion.div
+            <m.div
               key="cart-backdrop"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -128,7 +110,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
               onClick={closeCart}
               aria-hidden
             />
-            <motion.aside
+            <m.aside
               key="cart-drawer"
               ref={drawerRef}
               role="dialog"
@@ -151,7 +133,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                   aria-label="Close cart"
                   className="flex h-11 w-11 items-center justify-center text-white/70 transition-colors hover:text-white"
                 >
-                  <X size={20} strokeWidth={1.8} />
+                  <X size={20} strokeWidth={1.8} aria-hidden />
                 </button>
               </div>
 
@@ -193,18 +175,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                   Checkout (demo)
                 </button>
               </div>
-            </motion.aside>
+            </m.aside>
           </>
         )}
       </AnimatePresence>
 
       <div
         aria-live="polite"
-        className="pointer-events-none fixed inset-x-0 bottom-5 z-[60] flex justify-center px-4"
+        className="pointer-events-none fixed inset-x-0 bottom-5 z-[90] flex justify-center px-4"
       >
         <AnimatePresence>
           {toast && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 8 }}
@@ -213,7 +195,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
               className="rounded-[8px] bg-[#1A1A1A] px-4 py-3 text-[13.5px] font-medium text-white shadow-lg"
             >
               {toast}
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import { useRef } from "react";
 import Button from "./Button";
 
@@ -12,7 +12,7 @@ export default function Mission() {
   return (
     <section id="about" aria-label="Our mission">
       <div ref={ref} className="grid grid-cols-1 md:grid-cols-2">
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.7 }}
@@ -25,9 +25,9 @@ export default function Mission() {
             sizes="(min-width: 768px) 50vw, 100vw"
             className="object-cover object-center"
           />
-        </motion.div>
+        </m.div>
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.7, delay: 0.12 }}
@@ -51,7 +51,7 @@ export default function Mission() {
               Learn More
             </Button>
           </div>
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

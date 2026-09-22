@@ -2,21 +2,11 @@
 
 @theme inline {
   --color-paper: #F7F5F1;
-  --color-paper-dark: #EDE6DD;
   --color-charcoal: #1C1C1A;
-  --color-charcoal-light: #2D2D2D;
   --color-forest: #2F5D3A;
-  --color-forest-deep: #234A2D;
-  --color-forest-light: #3A6B47;
-  --color-sage: #7C8E79;
-  --color-sage-light: #A3B0A0;
-  --color-soft-gray: #B8B5B0;
-  --color-warm-beige: #E8DFD5;
   --color-cream: #FAF8F5;
-  --color-tan: #D4C8B8;
 
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
 ::selection {
@@ -78,33 +68,6 @@ body::before {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #7D8B7A;
-}
-
-/* Editorial underline animation */
-.editorial-underline {
-  position: relative;
-  display: inline-block;
-}
-
-.editorial-underline::after {
-  content: "";
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 0;
-  height: 1px;
-  background-color: #1A1A1A;
-  transition: width 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-.editorial-underline:hover::after {
-  width: 100%;
-}
-
-/* Editorial horizontal rule */
-.editorial-rule {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #1A1A1A15, transparent);
 }
 
 /* Bike image box: cap width on small screens to prevent horizontal overflow */

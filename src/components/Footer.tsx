@@ -1,17 +1,10 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import { useRef } from "react";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-
-const navLinks = [
-  { label: "Home", href: "#home" },
-  { label: "Bikes", href: "#bikes" },
-  { label: "About", href: "#about" },
-  { label: "Sustainability", href: "#sustainability" },
-  { label: "Support", href: "#support" },
-];
+import { navLinks } from "@/lib/nav";
 
 function InstagramIcon({ size = 18 }: { size?: number }) {
   return (
@@ -93,7 +86,7 @@ export default function Footer() {
       <MountainSilhouette />
 
       <div className="relative z-10 mx-auto max-w-[1280px] px-5 sm:px-6 md:px-10">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 16 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
@@ -106,15 +99,15 @@ export default function Footer() {
           </div>
 
           <div className="flex flex-col items-center gap-2.5 text-center md:col-span-1">
-            <p className="text-[18px] font-bold leading-tight tracking-[-0.01em] text-white">
+            <h2 className="text-[18px] font-bold leading-tight tracking-[-0.01em] text-white">
               Ready to Ride?
-            </p>
-            <p className="text-[13.5px] leading-snug text-white/60">
+            </h2>
+            <p className="text-[13.5px] leading-snug text-white/70">
               Join the movement. Choose HIRO.
             </p>
             <a
               href="mailto:support@hiro.bike"
-              className="text-[13.5px] text-white/70 underline-offset-4 transition-colors hover:text-white hover:underline"
+              className="inline-flex min-h-[44px] items-center text-[13.5px] text-white/70 underline-offset-4 transition-colors hover:text-white hover:underline"
             >
               support@hiro.bike
             </a>
@@ -126,18 +119,21 @@ export default function Footer() {
               <ArrowRight
                 size={15}
                 strokeWidth={1.8}
+                aria-hidden
                 className="transition-transform duration-200 group-hover:translate-x-1"
               />
             </a>
           </div>
 
           <div className="hidden md:col-span-1 md:block" aria-hidden />
-        </motion.div>
+        </m.div>
 
         <div className="border-t border-white/8 pb-8 pt-5 md:pb-7 md:pt-4">
           <div className="flex flex-col items-center gap-5 md:flex-row md:justify-between md:gap-6">
-            <p className="order-3 whitespace-nowrap text-[12px] text-white/65 md:order-1 md:text-[12.5px]">
-              © {new Date().getFullYear()} HIRO. All rights reserved.
+            <p className="order-3 text-[12px] text-white/70 md:order-1 md:text-[12.5px]">
+              <span suppressHydrationWarning>
+                © {new Date().getFullYear()} HIRO. All rights reserved.
+              </span>
             </p>
 
             <nav
@@ -162,8 +158,8 @@ export default function Footer() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={social.label}
-                  className="flex h-11 w-11 items-center justify-center text-white/65 transition-colors hover:text-white"
+                  aria-label={`${social.label} (opens in new tab)`}
+                  className="flex h-11 w-11 items-center justify-center text-white/70 transition-colors hover:text-white"
                 >
                   <social.icon size={17} />
                 </a>

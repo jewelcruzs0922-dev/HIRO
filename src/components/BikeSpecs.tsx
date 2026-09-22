@@ -1,5 +1,3 @@
-"use client";
-
 import { Target, Gauge, Battery, Weight } from "lucide-react";
 
 export interface SpecItem {
@@ -13,8 +11,9 @@ const icons = [Target, Gauge, Battery, Weight];
 export default function BikeSpecs({ specs }: { specs: SpecItem[] }) {
   return (
     <div
-      className="grid grid-cols-2 gap-x-6 gap-y-7 border-t border-[#1C1C1A]/12 pt-7 sm:max-w-md md:max-w-none lg:flex lg:max-w-none lg:flex-col lg:gap-9 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0"
+      role="group"
       aria-label="Specifications"
+      className="grid grid-cols-2 gap-x-6 gap-y-7 border-t border-[#1C1C1A]/12 pt-7 sm:max-w-md md:max-w-none lg:flex lg:max-w-none lg:flex-col lg:gap-9 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0"
     >
       {specs.map((s, i) => {
         const Icon = icons[i % icons.length];

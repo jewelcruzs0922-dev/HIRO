@@ -1,20 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { ShoppingBag, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useCart } from "./CartProvider";
-
-const navLinks = [
-  { label: "Home", href: "#home" },
-  { label: "Bikes", href: "#bikes" },
-  { label: "About", href: "#about" },
-  { label: "Sustainability", href: "#sustainability" },
-  { label: "Support", href: "#support" },
-];
-
-const sectionIds = ["home", "bikes", "about", "sustainability", "support"];
+import { navLinks, sectionIds } from "@/lib/nav";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -29,6 +21,7 @@ export default function Header() {
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40);
+    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -86,56 +79,22 @@ export default function Header() {
     setMenuOpen(!menuOpen);
   }, [menuOpen, closeCart]);
 
-  useEffect(() => {
-    if (!menuOpen) return;
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setMenuOpen(false);
-        return;
-      }
-      if (e.key !== "Tab" || !menuRef.current) return;
-
-      const focusable = menuRef.current.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled])'
-      );
-      if (focusable.length === 0) return;
-
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      const active = document.activeElement;
-
-      if (e.shiftKey && (active === first || active === menuRef.current)) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && active === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    };
-
-    window.addEventListener("keydown", onKeyDown);
-    const t = window.setTimeout(() => {
-      menuRef.current?.querySelector<HTMLElement>("a[href]")?.focus();
-    }, 50);
-
-    return () => {
-      window.removeEventListener("keydown", onKeyDown);
-      window.clearTimeout(t);
-    };
-  }, [menuOpen]);
+  useFocusTrap(menuRef, {
+    active: menuOpen,
+    onEscape: closeMenu,
+  });
 
   return (
     <>
-      <motion.header
+      <m.header
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-          className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
-            scrolled || menuOpen
-              ? "bg-[#1A1A1A]/92 backdrop-blur-sm"
-              : "bg-[#1A1A1A]/80 backdrop-blur-sm"
-          }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
+          scrolled || menuOpen
+            ? "bg-[#1A1A1A]/92 backdrop-blur-sm"
+            : "bg-[#1A1A1A]/80 backdrop-blur-sm"
+        }`}
       >
         <div className="mx-auto flex h-[64px] max-w-[1280px] items-center justify-between px-5 sm:px-6 md:h-[72px] md:px-10">
           <Link href="/" className="relative z-10" aria-label="HIRO home">
@@ -152,14 +111,14 @@ export default function Header() {
                 <a
                   key={link.label}
                   href={link.href}
-                  aria-current={isActive ? "true" : undefined}
-                  className={`relative pb-0.5 text-[13.5px] font-medium tracking-[0.01em] transition-colors ${
+                  aria-current={isActive ? "location" : undefined}
+                  className={`relative inline-flex min-h-[44px] items-center pb-0.5 text-[13.5px] font-medium tracking-[0.01em] transition-colors ${
                     isActive ? "text-white" : "text-white/75 hover:text-white"
                   }`}
                 >
                   {link.label}
                   {isActive && (
-                    <span className="absolute -bottom-0.5 left-0 h-[2px] w-full rounded-full bg-white" />
+                    <span className="absolute bottom-2 left-0 h-[2px] w-full rounded-full bg-white" />
                   )}
                 </a>
               );
@@ -178,7 +137,7 @@ export default function Header() {
               }
               className="relative -mr-1 flex h-11 w-11 items-center justify-center text-white/80 transition-colors hover:text-white"
             >
-              <ShoppingBag size={20} strokeWidth={1.6} />
+              <ShoppingBag size={20} strokeWidth={1.6} aria-hidden />
               {count > 0 && (
                 <span
                   className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#4A7858] px-1 text-[10px] font-bold leading-none text-white"
@@ -196,15 +155,15 @@ export default function Header() {
               className="relative z-10 -mr-2 flex h-11 w-11 items-center justify-center text-white lg:hidden"
               onClick={toggleMenu}
             >
-              {menuOpen ? <X size={24} /> : <Menu size={24} />}
+              {menuOpen ? <X size={24} aria-hidden /> : <Menu size={24} aria-hidden />}
             </button>
           </div>
         </div>
-      </motion.header>
+      </m.header>
 
       <AnimatePresence>
         {menuOpen && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -214,6 +173,14 @@ export default function Header() {
             aria-label="Site menu"
             className="fixed inset-0 z-40 bg-[#1A1A1A]/98 lg:hidden"
           >
+            <button
+              type="button"
+              aria-label="Close menu"
+              onClick={closeMenu}
+              className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center text-white/80 hover:text-white"
+            >
+              <X size={24} aria-hidden />
+            </button>
             <nav
               ref={menuRef}
               className="flex h-full flex-col items-center justify-center gap-7 px-6"
@@ -222,24 +189,27 @@ export default function Header() {
               {navLinks.map((link, i) => {
                 const isActive = activeId === link.href.slice(1);
                 return (
-                  <motion.a
+                  <m.a
                     key={link.label}
                     href={link.href}
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.05 + i * 0.06, duration: 0.35 }}
-                    aria-current={isActive ? "true" : undefined}
-                    className={`min-h-[44px] text-[20px] font-medium sm:text-[22px] ${
+                    aria-current={isActive ? "location" : undefined}
+                    className={`relative min-h-[44px] text-[20px] font-medium sm:text-[22px] ${
                       isActive ? "text-white" : "text-white/65"
                     }`}
                     onClick={closeMenu}
                   >
                     {link.label}
-                  </motion.a>
+                    {isActive && (
+                      <span className="absolute -bottom-1 left-0 h-[2px] w-full rounded-full bg-white" />
+                    )}
+                  </m.a>
                 );
               })}
             </nav>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </>

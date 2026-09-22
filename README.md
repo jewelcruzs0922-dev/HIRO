@@ -17,7 +17,7 @@ npm run dev
 
 After pulling image changes: `npm run optimize-images` (PNG → WebP in `public/`).
 
-Before deploying, set the canonical URL:
+Before deploying, copy `.env.example` to `.env.local` and set the canonical URL:
 
 ```bash
 # .env.local
@@ -51,7 +51,7 @@ NEXT_PUBLIC_SITE_URL=https://your-deployment-url.vercel.app
 - **Mission** split section
 - **Footer** with mountain silhouette, nav, contact email, social links
 - **A11y:** skip link, landmarks, `aria-*` on controls, focus-visible styles, reduced-motion support
-- **SEO:** metadata, Open Graph / Twitter cards, `robots.txt`, `sitemap.xml`
+- **SEO:** metadata, canonical URL, Open Graph / Twitter cards, JSON-LD, `robots.txt`, `sitemap.xml`
 - **Responsive:** mobile / tablet / desktop breakpoints
 
 ---
@@ -61,9 +61,10 @@ NEXT_PUBLIC_SITE_URL=https://your-deployment-url.vercel.app
 ```
 src/
   app/
-    layout.tsx        # fonts, metadata, skip link, CartProvider
+    layout.tsx        # fonts, metadata, JSON-LD, skip link, providers
     page.tsx          # section order
     not-found.tsx     # 404
+    apple-icon.png
     robots.ts
     sitemap.ts
     globals.css       # design tokens, focus styles
@@ -77,6 +78,14 @@ src/
     Footer.tsx
     Button.tsx        # renders <a> or <button> by intent
     CartProvider.tsx  # demo cart store + toast + drawer
+  hooks/
+    useFocusTrap.ts
+  lib/
+    nav.ts            # shared nav links
+    site.ts           # canonical site URL
+    constants.ts
+scripts/
+  optimize-images.mjs
 public/
   hiro-*.webp         # optimized images
 ```
@@ -101,10 +110,12 @@ Type: **Geist Sans** via `next/font`.
 ## Scripts
 
 ```bash
-npm run dev      # development
-npm run build    # production build
-npm run start    # serve production build
-npm run lint     # ESLint
+npm run dev             # development
+npm run build           # production build
+npm run start           # serve production build
+npm run lint            # ESLint
+npm run typecheck       # TypeScript (noEmit)
+npm run optimize-images # PNG → WebP in public/
 ```
 
 ---
@@ -113,18 +124,22 @@ npm run lint     # ESLint
 
 - Unused starter components and stock assets removed
 - Heavy PNGs converted to WebP (`scripts/optimize-images.mjs`)
-- Hero uses `priority` + `sizes`; below-the-fold images use `fill` + `sizes`
-- Client components kept to interactive islands
+- Hero uses `preload` + `sizes`; below-the-fold images use `fill` + `sizes`
+- `LazyMotion` + `m.*` for smaller Framer Motion bundles
+- Shared focus-trap hook; Geist Mono removed (unused)
+- Interactive sections are client components; `BikeSpecs` / `Button` are server-safe
 
 ---
 
 ## Accessibility notes
 
-- Skip-to-content link
+- Skip-to-content link (home + 404)
 - Keyboard-operable bike controls, color, and quantity
 - Mobile menu: focus moved into menu, Tab trapped, Escape closes; mutually exclusive with cart drawer
+- Focus restored to triggers after dialog close / bike change / expand
 - Global `:focus-visible` ring (light variant on dark surfaces)
-- `prefers-reduced-motion` respected in CSS
+- `prefers-reduced-motion` respected via CSS + `MotionConfig reducedMotion="user"`
+- WCAG AA contrast on body text and Mission panel
 
 ---
 

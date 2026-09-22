@@ -1,21 +1,56 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { MotionConfig } from "framer-motion";
+import { Geist } from "next/font/google";
+import { LazyMotion, domAnimation, MotionConfig } from "framer-motion";
 import "./globals.css";
 import { CartProvider } from "@/components/CartProvider";
+import { siteUrl } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const products = [
+  { name: "HIRO Trail", price: "3290", priceCurrency: "EUR" },
+  { name: "HIRO City", price: "2490", priceCurrency: "EUR" },
+  { name: "HIRO Fold", price: "1990", priceCurrency: "EUR" },
+] as const;
 
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiro-ebikes.vercel.app";
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${siteUrl}/#organization`,
+      name: "HIRO",
+      url: siteUrl,
+      logo: `${siteUrl}/hiro-hero.webp`,
+      description:
+        "Premium electric bikes engineered for a cleaner planet.",
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${siteUrl}/#website`,
+      url: siteUrl,
+      name: "HIRO",
+      publisher: { "@id": `${siteUrl}/#organization` },
+    },
+    ...products.map((product, index) => ({
+      "@type": "Product",
+      "@id": `${siteUrl}/#product-${index}`,
+      name: product.name,
+      image: `${siteUrl}/hiro-hero.webp`,
+      description: `${product.name} electric bike`,
+      brand: { "@type": "Brand", name: "HIRO" },
+      offers: {
+        "@type": "Offer",
+        price: product.price,
+        priceCurrency: product.priceCurrency,
+        availability: "https://schema.org/PreOrder",
+      },
+    })),
+  ],
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -44,8 +79,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/hiro-hero.webp",
-        width: 1200,
-        height: 630,
+        width: 1671,
+        height: 941,
         alt: "Rider on a HIRO electric bike at golden hour",
       },
     ],
@@ -60,7 +95,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#1A1A1A",
+  themeColor: "#F7F5F1",
 };
 
 export default function RootLayout({
@@ -69,8 +104,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" className={geistSans.variable}>
       <body className="min-h-screen bg-paper text-charcoal antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-[8px] focus:bg-[#1A1A1A] focus:px-4 focus:py-3 focus:text-sm focus:font-medium focus:text-white"
@@ -78,7 +117,9 @@ export default function RootLayout({
           Skip to content
         </a>
         <CartProvider>
-          <MotionConfig reducedMotion="user">{children}</MotionConfig>
+          <LazyMotion features={domAnimation}>
+            <MotionConfig reducedMotion="user">{children}</MotionConfig>
+          </LazyMotion>
         </CartProvider>
       </body>
     </html>
