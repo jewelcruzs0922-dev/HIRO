@@ -147,9 +147,9 @@ export default function Mission() {
 
   useEffect(() => {
     if (phase === "expanded" && prevPhase.current === "expanding") {
-      expandedRef.current?.focus({ preventScroll: false });
+      expandedRef.current?.focus({ preventScroll: true });
     } else if (phase === "collapsed" && prevPhase.current === "revealing") {
-      viewMoreButtonRef.current?.focus({ preventScroll: false });
+      viewMoreButtonRef.current?.focus({ preventScroll: true });
     }
     prevPhase.current = phase;
   }, [phase]);
