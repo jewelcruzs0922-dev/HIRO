@@ -9,6 +9,7 @@ import { useCart } from "@/components/cart";
 import { navLinks, clickTopIfSamePage } from "@/lib/nav";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
+import HRLogo from "@/components/ui/HRLogo";
 
 function hashOf(href: string): string | null {
   const i = href.indexOf("#");
@@ -119,8 +120,11 @@ export default function Header() {
             aria-label="HIRO home"
             onClick={(e) => clickTopIfSamePage(e, "/")}
           >
-            <span className="text-[26px] font-extrabold tracking-[0.18em] text-white md:text-[28px]">
-              HIRO
+            <span className="flex items-center gap-2.5 md:gap-3">
+              <HRLogo className="h-7 w-auto shrink-0 md:h-8" />
+              <span className="text-[26px] font-extrabold tracking-[0.18em] text-white md:text-[28px]">
+                HIRO
+              </span>
             </span>
           </Link>
 

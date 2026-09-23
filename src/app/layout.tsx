@@ -20,7 +20,7 @@ const jsonLd = {
       "@id": `${siteUrl}/#organization`,
       name: "HIRO",
       url: siteUrl,
-      logo: `${siteUrl}/hiro-hero.webp`,
+      logo: `${siteUrl}/hiro-logo.webp`,
       description: "Premium electric bikes engineered for a cleaner planet.",
     },
     {
