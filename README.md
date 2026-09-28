@@ -1,5 +1,9 @@
 # HIRO — E-Bike Landing Page
 
+[![Live](https://img.shields.io/badge/live-hiro--azurite2.vercel.app-000000?logo=vercel&logoColor=white)](https://hiro-azurite2.vercel.app)
+[![CI](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?logo=githubactions&logoColor=white)](https://github.com/jewelcruzs0922-dev/HIRO/actions)
+[![License: MIT](https://img.shields.io/badge/license-MIT-2F6FEB)](LICENSE)
+
 A production-style landing + **simulated checkout** for a fictional premium e-bike brand, built as a **frontend portfolio project** with Next.js App Router, TypeScript, Tailwind CSS v4, and Framer Motion.
 
 > **Role:** Frontend development · design-to-code, responsive UI, motion, accessibility, performance
@@ -30,7 +34,7 @@ Before deploying, copy `.env.example` to `.env.local` and set the canonical URL:
 
 ```bash
 # .env.local
-NEXT_PUBLIC_SITE_URL=https://your-deployment-url.vercel.app
+NEXT_PUBLIC_SITE_URL=https://hiro-azurite2.vercel.app
 ```
 
 ---
