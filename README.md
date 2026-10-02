@@ -68,7 +68,7 @@ NEXT_PUBLIC_SITE_URL=https://hiro-azurite2.vercel.app
   - Simulated payment — no card data, no network writes
 - **Mission** split section
 - **Footer** with mountain silhouette, nav, contact email
-- **Tests:** 37 unit (Vitest) + 16 e2e (Playwright, desktop + mobile) with axe WCAG A/AA in CI — including the populated checkout and confirmation
+- **Tests:** 48 unit (Vitest) + 18 e2e (Playwright, desktop + mobile) with axe WCAG A/AA in CI — including the support page, populated checkout and confirmation
 - **A11y:** skip link, landmarks, `aria-*` on controls, focus-visible styles, reduced-motion support
 - **SEO:** metadata, canonical URL, Open Graph / Twitter cards, JSON-LD, `robots.txt`, `sitemap.xml`
 - **Responsive:** mobile / tablet / desktop breakpoints
@@ -88,6 +88,8 @@ src/
       confirmation/
         page.tsx
         Confirmation.tsx    # reads last order from sessionStorage
+    support/
+      page.tsx              # support route (server shell + metadata)
     apple-icon.png
     robots.ts
     sitemap.ts
@@ -103,6 +105,11 @@ src/
       FieldInput.tsx
       SectionCard.tsx
       OrderSummary.tsx
+      index.ts
+    support/                # support page
+      SupportPage.tsx       # composes hero, FAQ, contact, closing band
+      FaqSection.test.tsx   # vitest — FAQ content tests
+      ContactSection.test.tsx # vitest — contact section tests
       index.ts
     layout/
       Header.tsx            # scroll state, mobile menu, cart trigger
@@ -137,7 +144,8 @@ src/
     constants.ts
     cart.test.ts             # vitest — cart math, SKU merge, storage parsing
     checkout.test.ts         # vitest — validation, line images, delivery dates
-    orders.test.ts           # vitest — stored-order guard, order id shape
+    orders.test.ts          # vitest — stored-order guard, order id shape
+    orders.dom.test.ts      # vitest — order id shape in rendered DOM (jsdom)
 e2e/
   checkout.spec.ts           # full purchase flow + edge cases
   a11y.spec.ts               # axe WCAG A/AA on key routes
@@ -229,27 +237,27 @@ LCP is the preloaded hero image; under Lighthouse's simulated mobile network (~1
 
 | Raw    | Gzip   | Files |
 | ------ | ------ | ----- |
-| ~812KB | ~252KB | 17    |
+| ~915KB | ~282KB | 18    |
 
 Largest first-load chunk ≈ **224KB raw** (shared framework/vendor).
 
 ### Accessibility (axe-core in CI)
 
-- **0 violations** (WCAG 2.0/2.1 A + AA) on `/`, `/checkout` (empty **and** populated), `/checkout/confirmation` (fallback **and** placed order)
+- **0 violations** (WCAG 2.0/2.1 A + AA) on `/`, `/support`, `/checkout` (empty **and** populated), `/checkout/confirmation` (fallback **and** placed order)
 - Enforced by `e2e/a11y.spec.ts` on every CI run
 
 ### Tests
 
 ```bash
 npm run test
-# 37 passed — cart math/SKU merge/storage parsing, checkout validation,
-# order storage guard + id shape, delivery dates
+# 48 passed — cart math/SKU merge/storage parsing, checkout validation,
+# order storage guard + id shape, delivery dates, support-page section tests
 
 npm run test:e2e
-# 16 passed, 2 skipped (viewport-gated by design) — full order flow on
+# 18 passed, 2 skipped (viewport-gated by design) — full order flow on
 # desktop + mobile, guards, scroll-spy, mobile-menu keyboard flow,
-# 4× axe per viewport (home, empty checkout, fallback confirmation,
-# populated checkout + confirmation). CI runs against `npm run start`
+# 5× axe per viewport (home, support, empty checkout, fallback
+# confirmation, populated checkout + confirmation). CI runs against `npm run start`
 # with the production CSP + SRI headers (verified locally the same way).
 ```
 
