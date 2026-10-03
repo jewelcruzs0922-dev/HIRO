@@ -15,6 +15,8 @@ A production-style landing + **simulated checkout** for a fictional premium e-bi
 
 **https://hiro-azurite2.vercel.app**
 
+![The HIRO e-bike landing page](docs/home.jpg)
+
 Production is deployed from this repo with the Vercel CLI (`npx vercel --prod`). The canonical URL lives in `src/lib/site.ts` (safe fallback if the env var is missing); set `NEXT_PUBLIC_SITE_URL` per `.env.example` when using a custom domain.
 
 ---
