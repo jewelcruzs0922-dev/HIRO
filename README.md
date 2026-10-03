@@ -23,10 +23,10 @@ Production is deployed from this repo with the Vercel CLI (`npx vercel --prod`).
 
 These are screenshots of the running site, not mockups.
 
-| Support | Checkout |
-| --- | --- |
-| ![The support page with FAQs and contact details](docs/support.jpg) | ![The checkout page with delivery details](docs/checkout.jpg) |
-| <sub><b>Support</b> — warranty, FAQs, direct contact</sub> | <sub><b>Checkout</b> — simulated payment, no real charges</sub> |
+| Support                                                             | Checkout                                                        |
+| ------------------------------------------------------------------- | --------------------------------------------------------------- |
+| ![The support page with FAQs and contact details](docs/support.jpg) | ![The checkout page with delivery details](docs/checkout.jpg)   |
+| <sub><b>Support</b> — warranty, FAQs, direct contact</sub>          | <sub><b>Checkout</b> — simulated payment, no real charges</sub> |
 
 ---
 
